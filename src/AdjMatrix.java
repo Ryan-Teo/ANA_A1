@@ -103,8 +103,30 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     public ArrayList<T> neighbours(T vertLabel) {
         ArrayList<T> neighbours = new ArrayList<T>();
         
-        // Implement me!
-        
+        //both vertex has to exist
+    	//print to system.err if does not exist
+    	//Set indices if vertex exists
+    	int vertIndex=-1;
+    	for(int i=0; i<vertex.length;i++){
+    		if(vertex[i]==vertLabel){
+    			vertIndex=i;
+    		}
+    	}
+    	if(vertIndex==-1){
+    		System.err.println("Vertex "+(String)vertLabel+" does not exist.");
+    		return null;
+    	}
+    	
+    	for(int i=0; i<vertex.length;i++){
+    		if(matrix[vertIndex][i]==1 && matrix[i][vertIndex]==1){
+    			neighbours.add(vertex[i]);
+    		}else if(matrix[vertIndex][i]==0 && matrix[i][vertIndex]==0){
+    			continue;
+    		}else{
+    			//Should never reach here
+        		System.err.println("Something went wrong! (2)");
+    		}
+    	}
         return neighbours;
     } // end of neighbours()
     
