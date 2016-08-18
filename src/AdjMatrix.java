@@ -11,24 +11,40 @@ import java.util.*;
  */
 public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
 {
-
 	/**
-	 * Contructs empty graph.
+	 * Constructs empty graph.
 	 */
-    public AdjMatrix() {
-    	// Implement me!
+	private int[][] matrix;
+	private T[] vertex;
+	
+    @SuppressWarnings("unchecked")
+	public AdjMatrix() {
+    	vertex = (T[]) new String[0];
+    	matrix= new int[vertex.length][vertex.length];
     } // end of AdjMatrix()
     
-    
-    public void addVertex(T vertLabel) {
-        // Implement me!
+    @SuppressWarnings("unchecked")
+	public void addVertex(T vertLabel) {
+    	T[] tempVertex = (T[]) new String[vertex.length+1];
+    	for(int i=0;i<vertex.length;i++){
+    		tempVertex[i]=vertex[i];
+    	}
+ 
+    	int[][] tempMatrix = new int[vertex.length+1][vertex.length+1];
+    	//Copy matrix to temporary matrix
+    	for(int i=0;i<vertex.length;i++){
+    		for(int j=0; j<vertex.length;j++){
+    			tempMatrix[i][j]=matrix[i][j];
+    		}
+    	}
+    	tempVertex[vertex.length] = vertLabel;
+    	
+    	// Implement me!
     } // end of addVertex()
 	
-    
     public void addEdge(T srcLabel, T tarLabel) {
         // Implement me!
     } // end of addEdge()
-	
 
     public ArrayList<T> neighbours(T vertLabel) {
         ArrayList<T> neighbours = new ArrayList<T>();

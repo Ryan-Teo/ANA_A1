@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.*;
-//hello
 /**
  * Adjacency list implementation for the FriendshipGraph interface.
  * 
