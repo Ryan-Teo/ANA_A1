@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.util.*;
 
@@ -234,11 +233,9 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
 	
     
     public void printVertices(PrintWriter os) {
-    	os.println("Vertices:");
     	for(int i=0; i<vertex.length;i++){
-        	os.println((String)vertex[i]);
+        	os.println(vertex[i]);
     	}
-    	os.println();
     } // end of printVertices()
 	
     
