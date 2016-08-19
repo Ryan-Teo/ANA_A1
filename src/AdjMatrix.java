@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.util.*;
 
@@ -78,7 +79,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     		}
     	}
     	if(srcIndex==-1 && tarIndex==-1){
-    		System.err.println("Vertex "+(String)srcLabel+" and "+(String)tarLabel+" does not exist.");
+    		System.err.println("Vertex "+(String)srcLabel+" and "+(String)tarLabel+" do not exist.");
     		return;
     	}else if(srcIndex==-1){
     		System.err.println("Vertex "+(String)srcLabel+" does not exist.");
@@ -157,7 +158,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     			tempVertex[i]=vertex[i];
     		}
     	}
-    
+
     	//remove from matrix
     	int[][] tempMatrix = new int[newSize][newSize];
     	for(int i=0;i<vertex.length;i++){
@@ -165,15 +166,22 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     			if(i==vertIndex || j==vertIndex){
         			continue;
         		}else if(i>vertIndex){
-        			tempMatrix[i-1][j]=matrix[i][j];
+        			if(j>vertIndex){
+            			tempMatrix[i-1][j-1]=matrix[i][j];
+        			}else{
+        				tempMatrix[i-1][j]=matrix[i][j];
+        			}
         		}else if(j>vertIndex){
-        			tempMatrix[i][j-1]=matrix[i][j];
+        			if(i>vertIndex){
+            			tempMatrix[i-1][j-1]=matrix[i][j];
+        			}else{
+        				tempMatrix[i][j-1]=matrix[i][j];
+        			}
         		}else{
         			tempMatrix[i][j]=matrix[i][j];
         		}
     		}
     	}
-    	
     	//Move elements back to original resized arrays
     	vertex = (T[]) new String[newSize];
     	matrix = new int[newSize][newSize];
@@ -202,7 +210,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     		}
     	}
     	if(srcIndex==-1 && tarIndex==-1){
-    		System.err.println("Vertex "+(String)srcLabel+" and "+(String)tarLabel+" does not exist.");
+    		System.err.println("Vertex "+(String)srcLabel+" and "+(String)tarLabel+" do not exist.");
     		return;
     	}else if(srcIndex==-1){
     		System.err.println("Vertex "+(String)srcLabel+" does not exist.");
@@ -215,7 +223,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     	//if edge already exists, do nothing? maybe print out message
     	if(matrix[srcIndex][tarIndex]==1 && matrix[tarIndex][srcIndex]==1){
     		matrix[srcIndex][tarIndex] = matrix[tarIndex][srcIndex] = 0;
-    		System.out.println("Edge added!");
+    		System.out.println("Edge removed!");
     	}else if(matrix[srcIndex][tarIndex]==0 && matrix[tarIndex][srcIndex]==0){
     		System.err.println("Edge does not exist!");
     	}else{
@@ -238,9 +246,11 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     	os.println("Edges:");
     	for(int i=0; i<vertex.length;i++){
     		for(int j=0; j<vertex.length;j++){
-            	os.printf("%d",matrix[i][j]);
+    			//If connection
+    			if(matrix[i][j]==1){
+    				os.printf("%s %s\n", vertex[i],vertex[j]);
+    			}
         	}
-    		os.println();
     	}
     	os.println();
     } // end of printEdges()
