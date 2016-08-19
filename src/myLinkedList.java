@@ -6,7 +6,7 @@ public class myLinkedList {
 	private int listCount;
 	@SuppressWarnings("unused")
 	private int removed;
-	
+	//self made linked list
 	public myLinkedList(Node headNode, Node tailNode, int listCount) {
 		this.headNode = headNode;
 		this.tailNode = tailNode;
