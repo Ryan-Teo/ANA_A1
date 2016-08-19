@@ -49,14 +49,13 @@ public class myLinkedList {
 		}
 		listCount++;
 	}
-	public boolean removeNode(String removeVertice, int removed){
+	public boolean removeNode(String removeVertice){
 		Node current = headNode;
 		Node previous = null;
 		
 		if (current.getVertice() == removeVertice){
 			headNode = tailNode = null;
 			listCount = 0;
-			removed++;
 			return true;
 		}
 		else{
@@ -65,7 +64,6 @@ public class myLinkedList {
 				if (current.getVertice() == removeVertice){
 					previous.setNextNode(current.getNextNode());
 					current = null;
-					removed++;
 					return true;
 				}
 				current = headNode.getNextNode();
@@ -82,5 +80,13 @@ public class myLinkedList {
 			}
 		}
 		return false;
+	}
+	public boolean printNode(){
+		Node current = headNode;
+		for (int i = 0; i <= listCount; i++){
+			System.out.println(current.getVertice());
+			current = headNode.getNextNode();
+		}
+		return true;
 	}
 }

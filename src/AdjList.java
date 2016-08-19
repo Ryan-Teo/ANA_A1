@@ -49,8 +49,8 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	String source = (String) srcLabel;
     	String target = (String) tarLabel;
     	
-    	if(searchVertex(indexArray, (String)srcLabel) != -1 && searchVertex(indexArray,(String)tarLabel)!= -1){
-    		checkKey = searchVertex(indexArray, (String)srcLabel);
+    	if(searchVertex(indexArray, source) != -1 && searchVertex(indexArray,target)!= -1){
+    		checkKey = searchVertex(indexArray, source);
     		
     		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
     			Integer key = entry.getKey();
@@ -72,32 +72,98 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     } // end of addEdge()
 	
 
-    public ArrayList<T> neighbours(T vertLabel) {
+    @SuppressWarnings("unchecked")
+	public ArrayList<T> neighbours(T vertLabel) {
         ArrayList<T> neighbours = new ArrayList<T>();
+        String vertex = (String) vertLabel;
+        int checkKey;
         
-        // Implement me!
+        if(searchVertex(indexArray, vertex) != -1){
+    		checkKey = searchVertex(indexArray, vertex);
+    		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+    			Integer key = entry.getKey();
+    			if(key == checkKey){
+    				myLinkedList list = entry.getValue();
+    				while(list.getHeadNode().getNextNode()!= null){
+    					String newVertex = list.getHeadNode().getVertice();
+    					neighbours.add((T) newVertex);
+    				}
+    			}
+    		}
+    	}
         
         return neighbours;
     } // end of neighbours()
     
     
     public void removeVertex(T vertLabel) {
-        // Implement me!
+    	String removeVert = (String) vertLabel;
+    	int checkKey;
+    	
+    	if(searchVertex(indexArray, removeVert) != -1){
+    		checkKey = searchVertex(indexArray, removeVert);
+    		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+    			Integer key = entry.getKey();
+    			if(key == checkKey){
+    				myLinkedList list = entry.getValue();
+    				if(list.searchNode(removeVert) == true){
+    					list.removeNode(removeVert);
+    				}
+    			}
+    		}
+    	}
+    	else{
+    		System.out.println(">>> Error: Inputted vertex does not exist.");
+    	}	
     } // end of removeVertex()
 	
     
     public void removeEdge(T srcLabel, T tarLabel) {
-        // Implement me!
+    	int checkKeySource, checkKeyTarget;
+    	String source = (String) srcLabel;
+    	String target = (String) tarLabel;
+    	
+    	if(searchVertex(indexArray, source) != -1 && searchVertex(indexArray,target)!= -1){
+    		checkKeySource = searchVertex(indexArray, source);
+    		checkKeyTarget = searchVertex(indexArray, target);
+    		
+    		
+    		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+    			Integer key = entry.getKey();
+    			if(key == checkKeySource){
+    				myLinkedList list = entry.getValue();
+    				if(list.searchNode(target) == true){
+    					list.removeNode(target);
+    				}
+    			}
+    			else if(key == checkKeyTarget){
+    				myLinkedList list = entry.getValue();
+    				if(list.searchNode(source) == true){
+    					list.removeNode(source);
+    				}
+    			} 
+    		}
+    	}
+    	else
+    	{
+    		System.out.println(">>> Error: Inputted source or target does not exist.");
+    	}
     } // end of removeEdges()
 	
     
     public void printVertices(PrintWriter os) {
-        // Implement me!
+    	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+    		  myLinkedList value = entry.getValue();
+    		  os.println(value.getHeadNode().getVertice());
+    		}
     } // end of printVertices()
 	
     
     public void printEdges(PrintWriter os) {
-        // Implement me!
+    	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+  		  myLinkedList value = entry.getValue();
+  		  os.print(value.printNode());
+  		}
     } // end of printEdges()
     
     
