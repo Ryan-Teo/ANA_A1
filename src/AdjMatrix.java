@@ -93,7 +93,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     		matrix[srcIndex][tarIndex] = matrix[tarIndex][srcIndex] = 1;
     		System.out.println("Edge added!");
     	}else if(matrix[srcIndex][tarIndex]==1 && matrix[tarIndex][srcIndex]==1){
-    		System.out.println("Edge already exists!");
+    		System.err.println("Edge already exists!");
     	}else{
     		//Should never reach here
     		System.err.println("Something went wrong! (1)");
@@ -131,23 +131,118 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     } // end of neighbours()
     
     
-    public void removeVertex(T vertLabel) {
-        // Implement me!
+    @SuppressWarnings("unchecked")
+	public void removeVertex(T vertLabel) {
+    	int newSize = vertex.length-1;
+    	int vertIndex=-1;
+    	for(int i=0; i<vertex.length;i++){
+    		if(vertex[i]==vertLabel){
+    			vertIndex=i;
+    		}
+    	}
+    	if(vertIndex==-1){
+    		System.err.println("Vertex "+(String)vertLabel+" does not exist.");
+    		return;
+    	}
+    	// if i==vert skip
+    	// if i>vert temp[i-1][j]=matrix[i][j]
+    	// remove from vertex array
+    	T[] tempVertex = (T[]) new String[newSize];
+    	for(int i=0;i<vertex.length;i++){
+    		if(i==vertIndex){
+    			continue;
+    		}else if(i>vertIndex){
+    			tempVertex[i-1]=vertex[i];
+    		}else{
+    			tempVertex[i]=vertex[i];
+    		}
+    	}
+    
+    	//remove from matrix
+    	int[][] tempMatrix = new int[newSize][newSize];
+    	for(int i=0;i<vertex.length;i++){
+    		for(int j=0;j<vertex.length;j++){
+    			if(i==vertIndex || j==vertIndex){
+        			continue;
+        		}else if(i>vertIndex){
+        			tempMatrix[i-1][j]=matrix[i][j];
+        		}else if(j>vertIndex){
+        			tempMatrix[i][j-1]=matrix[i][j];
+        		}else{
+        			tempMatrix[i][j]=matrix[i][j];
+        		}
+    		}
+    	}
+    	
+    	//Move elements back to original resized arrays
+    	vertex = (T[]) new String[newSize];
+    	matrix = new int[newSize][newSize];
+    	for(int i=0;i<newSize;i++){
+    		vertex[i]=tempVertex[i];
+    	}
+    	for(int i=0;i<newSize;i++){
+    		for(int j=0; j<newSize;j++){
+    			matrix[i][j]=tempMatrix[i][j];
+    		}
+    	}
     } // end of removeVertex()
 	
     
     public void removeEdge(T srcLabel, T tarLabel) {
-        // Implement me!
+    	//both vertices have to exist
+    	//print to system.err if one does not exist
+    	//Set indices if vertex exists
+    	int srcIndex=-1,tarIndex=-1;
+    	for(int i=0; i<vertex.length;i++){
+    		if(vertex[i]==srcLabel){
+    			srcIndex=i;
+    		}
+    		if(vertex[i]==tarLabel){
+    			tarIndex=i;
+    		}
+    	}
+    	if(srcIndex==-1 && tarIndex==-1){
+    		System.err.println("Vertex "+(String)srcLabel+" and "+(String)tarLabel+" does not exist.");
+    		return;
+    	}else if(srcIndex==-1){
+    		System.err.println("Vertex "+(String)srcLabel+" does not exist.");
+    		return;
+    	}else if(tarIndex==-1){
+    		System.err.println("Vertex "+(String)tarLabel+" does not exist.");
+    		return;
+    	}
+
+    	//if edge already exists, do nothing? maybe print out message
+    	if(matrix[srcIndex][tarIndex]==1 && matrix[tarIndex][srcIndex]==1){
+    		matrix[srcIndex][tarIndex] = matrix[tarIndex][srcIndex] = 0;
+    		System.out.println("Edge added!");
+    	}else if(matrix[srcIndex][tarIndex]==0 && matrix[tarIndex][srcIndex]==0){
+    		System.err.println("Edge does not exist!");
+    	}else{
+    		//Should never reach here
+    		System.err.println("Something went wrong! (1)");
+    	}
     } // end of removeEdges()
 	
     
     public void printVertices(PrintWriter os) {
-        // Implement me!
+    	os.println("Vertices:");
+    	for(int i=0; i<vertex.length;i++){
+        	os.println((String)vertex[i]);
+    	}
+    	os.println();
     } // end of printVertices()
 	
     
     public void printEdges(PrintWriter os) {
-        // Implement me!
+    	os.println("Edges:");
+    	for(int i=0; i<vertex.length;i++){
+    		for(int j=0; j<vertex.length;j++){
+            	os.printf("%d",matrix[i][j]);
+        	}
+    		os.println();
+    	}
+    	os.println();
     } // end of printEdges()
     
     
