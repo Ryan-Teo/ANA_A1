@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
+
 /**
  * Adjacency list implementation for the FriendshipGraph interface.
  * 
@@ -9,24 +11,64 @@ import java.util.*;
  */
 public class AdjList <T extends Object> implements FriendshipGraph<T>
 {   
-
-
-        
+       
+	
+	Map<Integer, myLinkedList> indexArray;
+	int indexCount = 0;
+	String newVertice;
+	String sourceVertice;
+	String targetVertice;
     /**
 	 * Contructs empty graph.
 	 */
     public AdjList() {
-    	// Implement me!
+    	indexArray = new HashMap<Integer, myLinkedList>();
     } // end of AdjList()
     
     
     public void addVertex(T vertLabel) {
-        // Implement me!
+        newVertice = (String)vertLabel;
+    	Node newVerticeNode = new Node(newVertice, null);
+    	myLinkedList newLinkedList = new myLinkedList(newVerticeNode, newVerticeNode, 1);
+    	indexArray.put(indexCount++, newLinkedList);
     } // end of addVertex()
 	
-    
+    public int searchVertex(Map<Integer, myLinkedList> arrayMap, String vertLabel){
+    	int key = -1;
+    	
+    	for (Entry<Integer, myLinkedList> entry : arrayMap.entrySet()) {
+    		myLinkedList list = entry.getValue();
+      	    if(vertLabel == list.getHeadNode().getVertice()){
+      	    	key = entry.getKey();
+      	    }
+    	}    
+    	return key;
+    }
     public void addEdge(T srcLabel, T tarLabel) {
-        // Implement me!
+    	int checkKey;
+    	String source = (String) srcLabel;
+    	String target = (String) tarLabel;
+    	
+    	if(searchVertex(indexArray, (String)srcLabel) != -1 && searchVertex(indexArray,(String)tarLabel)!= -1){
+    		checkKey = searchVertex(indexArray, (String)srcLabel);
+    		
+    		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+    			Integer key = entry.getKey();
+    			if(key == checkKey){
+    				myLinkedList list = entry.getValue();
+    				if(list.searchNode(target) != true){
+    					list.addNode(target);
+    				}
+    				else{
+    					System.out.println(">>>Error: Edge already exists.");
+    				}
+    			}
+    		}
+    	}
+    	else
+    	{
+    		System.out.println(">>> Error: Inputted source or target does not exist.");
+    	}
     } // end of addEdge()
 	
 
