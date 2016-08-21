@@ -39,6 +39,7 @@ public class myLinkedList {
 	
 	public void addNode(String newVertice){
 		Node newNode = new Node(newVertice, null);
+		
 		if(headNode == null){
 			headNode = newNode;
 			tailNode = newNode;
@@ -49,44 +50,97 @@ public class myLinkedList {
 		}
 		listCount++;
 	}
-	public boolean removeNode(String removeVertice){
+	public boolean removeEdgeNode(String source, String target){
 		Node current = headNode;
 		Node previous = null;
+		Boolean result = false;
+		if (current.getVertice() == source && current != tailNode){
+			previous = current;
+			current = current.getNextNode();
+			for(int i = 0; i < listCount -1 ; i++){
+				if (current.getVertice() == (target) && current != tailNode){
+					previous.setNextNode(current.getNextNode());
+					current = null;
+					result = true;
+					listCount--;
+					break;
+				}
+				else 
+					if (current.getVertice() == (target) && current == tailNode){
+						if (headNode.getNextNode() != tailNode){
+							tailNode = previous;
+						}
+						current = null;
+						result = true;
+						listCount--;
+						
+						break;
+				}
+				else{
+					previous = current;
+					current = current.getNextNode();
+				}
+			}
+	
+			current = headNode;
+		}
+		else if (current.getVertice() == source && current == tailNode){
+			if (tailNode.getVertice() == target){
+				tailNode = headNode;
+				current = null;
+				listCount--;
+			}
+			
+		}
+			
+		return result;
 		
-		if (current.getVertice() == removeVertice){
+	}
+	
+	public boolean removeVerticeNode(String removeVertice){
+		Node current = null;
+		
+		if (headNode.getVertice() == removeVertice && headNode == tailNode){
+			headNode = tailNode = null;
+			return true;
+		}
+		
+		else if (headNode.getVertice() == removeVertice && headNode != tailNode){
+			current = headNode.getNextNode();
+			for(int i = 0; i < listCount - 1; i++){
+				headNode.setNextNode(current.getNextNode());
+				current = null;
+				current = headNode.getNextNode();
+			}
 			headNode = tailNode = null;
 			listCount = 0;
 			return true;
 		}
-		else{
-			for (int i = 0; i <= listCount; i++){
-				previous = current;
-				if (current.getVertice() == removeVertice){
-					previous.setNextNode(current.getNextNode());
-					current = null;
-					return true;
-				}
-				current = headNode.getNextNode();
-			}
-			return false; 
-		}
+		return false;
 		
 	}
 	public boolean searchNode(String searchValue){
 		Node current = headNode;
-		for (int i = 0; i <= listCount; i++){
+		for(int i = 0; i < listCount; i++){
 			if (searchValue == current.getVertice()){
 				return true; //edge exists
+			}
+			if (current.getNextNode()!= null){
+				current = current.getNextNode();
 			}
 		}
 		return false;
 	}
 	public boolean printNode(){
 		Node current = headNode;
-		for (int i = 0; i <= listCount; i++){
-			System.out.println(current.getVertice());
-			current = headNode.getNextNode();
-		}
+			for(int i = 0; i < listCount; i++){
+				System.out.printf(current.getVertice());
+				if (current.getNextNode()!= null){
+					current = current.getNextNode();
+				}
+				else
+					return true;
+			};
 		return true;
 	}
 }
