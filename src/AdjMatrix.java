@@ -1,4 +1,4 @@
-import java.io.*;
+import java.io.PrintWriter;
 import java.util.*;
 
 
@@ -70,10 +70,10 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     	//Set indices if vertex exists
     	int srcIndex=-1,tarIndex=-1;
     	for(int i=0; i<vertex.length;i++){
-    		if(vertex[i]==srcLabel){
+    		if(vertex[i].equals(srcLabel)){
     			srcIndex=i;
     		}
-    		if(vertex[i]==tarLabel){
+    		if(vertex[i].equals(tarLabel)){
     			tarIndex=i;
     		}
     	}
@@ -108,7 +108,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     	//Set indices if vertex exists
     	int vertIndex=-1;
     	for(int i=0; i<vertex.length;i++){
-    		if(vertex[i]==vertLabel){
+    		if(vertex[i].equals(vertLabel)){
     			vertIndex=i;
     		}
     	}
@@ -136,7 +136,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     	int newSize = vertex.length-1;
     	int vertIndex=-1;
     	for(int i=0; i<vertex.length;i++){
-    		if(vertex[i]==vertLabel){
+    		if(vertex[i].equals(vertLabel)){
     			vertIndex=i;
     		}
     	}
@@ -201,10 +201,10 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     	//Set indices if vertex exists
     	int srcIndex=-1,tarIndex=-1;
     	for(int i=0; i<vertex.length;i++){
-    		if(vertex[i]==srcLabel){
+    		if(vertex[i].equals(srcLabel)){
     			srcIndex=i;
     		}
-    		if(vertex[i]==tarLabel){
+    		if(vertex[i].equals(tarLabel)){
     			tarIndex=i;
     		}
     	}
@@ -254,7 +254,59 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
-    	// Implement me!
+    	//both vertices have to exist
+    	//print to system.err if one does not exist
+    	//Set indices if vertex exists
+    	int vert1Index=-1,vert2Index=-1;
+    	for(int i=0; i<vertex.length;i++){
+    		if(vertex[i].equals(vertLabel1)){
+    			vert1Index=i;
+    		}
+    		if(vertex[i].equals(vertLabel2)){
+    			vert2Index=i;
+    		}
+    	}
+    	if(vert1Index==-1 && vert2Index==-1){
+    		System.err.println("Vertex "+(String)vertLabel1+" and "+(String)vertLabel2+" do not exist.");
+    		return -1;
+    	}else if(vert1Index==-1){
+    		System.err.println("Vertex "+(String)vertLabel1+" does not exist.");
+    		return -1;
+    	}else if(vert2Index==-1){
+    		System.err.println("Vertex "+(String)vertLabel2+" does not exist.");
+    		return -1;
+    	}
+    	
+    	//For Adj Matrix Multiplication
+    	int[][] mMatrix = new int[vertex.length][vertex.length]; //Store values for multiplied matrix
+    	int[][] outMatrix = new int[vertex.length][vertex.length]; //Store values for final matrix
+    	
+    	for(int i=0;i<vertex.length;i++){
+    		for(int j=0; j<vertex.length;j++){
+    			mMatrix[i][j]=matrix[i][j];
+    		}
+    	}
+    	//CHECK MEEEEEEEE
+    	for(int a=1;a<=vertex.length;a++){
+	    	for(int j=0;j<vertex.length;j++){
+	    		for(int i=0;i<vertex.length;i++){
+	    			int val=0;
+	    			for(int y=0;y<vertex.length;y++){
+	    				val+=mMatrix[y][j]*matrix[i][y];
+	    			}
+	    			outMatrix[i][j]=val;
+	    		}
+	    	}
+	    	for(int i=0;i<vertex.length;i++){
+	    		for(int j=0; j<vertex.length;j++){
+	    			mMatrix[i][j]=outMatrix[i][j];
+	    		}
+	    	}
+	    	if(outMatrix[vert1Index][vert2Index]>=1){
+	    		//Matrix to the power of a+1, distance between 2 nodes, value of which in matrix will be the number of paths from one node to another
+				return a+1;
+			}
+    	}
     	
         // if we reach this point, source and target are disconnected
         return disconnectedDist;    	
