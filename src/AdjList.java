@@ -82,24 +82,37 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 
     @SuppressWarnings("unchecked")
 	public ArrayList<T> neighbours(T vertLabel) {
-        ArrayList<T> neighbours = new ArrayList<T>();
-        String vertex = (String) vertLabel;
-        int checkKey;
-        
-        if(searchVertex(indexArray, vertex) != -1){
-    		checkKey = searchVertex(indexArray, vertex);
-    		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
-    			Integer key = entry.getKey();
-    			if(key == checkKey){
-    				myLinkedList list = entry.getValue();
-    				while(list.getHeadNode().getNextNode()!= null){
-    					String newVertex = list.getHeadNode().getVertice();
-    					neighbours.add((T) newVertex);
-    				}
-    			}
-    		}
-    	}
-        
+    	  ArrayList<T> neighbours = new ArrayList<T>();
+          String vertex = (String) vertLabel;
+          int checkKey;
+          Node current = null;
+          
+          if(searchVertex(indexArray, vertex) != -1){
+      		checkKey = searchVertex(indexArray, vertex);
+      		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+      			Integer key = entry.getKey();
+      			if(key == checkKey){
+      				myLinkedList list = entry.getValue();
+      				if (list.getHeadNode().getVertice() == vertex){
+      					current = list.getHeadNode();
+      					neighbours.add((T) current.getVertice());
+      					for(int i = 0; i < list.getListCount()-1; i++){
+      						if (current == list.getTailNode()){
+      							break;
+      						}
+      						current = current.getNextNode();
+      						String newVertex = current.getVertice();
+  	    					neighbours.add((T) newVertex);
+      					}
+      				}
+      			}
+      		}
+      	}
+         for (int i = 0; i < neighbours.size(); i++) {
+        	 System.out.printf(neighbours.get(i) + " ");
+        	
+  		}
+         System.out.println();
         return neighbours;
     } // end of neighbours()
     
@@ -165,7 +178,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 	
     
     public void printVertices(PrintWriter os) {
-    	System.out.println("Test1");
+    	
     	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
     		  myLinkedList value = entry.getValue();
     		  
