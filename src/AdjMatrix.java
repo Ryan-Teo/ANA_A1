@@ -52,10 +52,11 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     	
     	//Move elements back to original resized arrays
     	vertex = (T[]) new String[newSize];
-    	matrix = new int[newSize][newSize];
     	for(int i=0;i<newSize;i++){
     		vertex[i]=tempVertex[i];
     	}
+    	
+    	matrix = new int[newSize][newSize];
     	for(int i=0;i<newSize;i++){
     		for(int j=0; j<newSize;j++){
     			matrix[i][j]=tempMatrix[i][j];
@@ -240,7 +241,6 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
 	
     
     public void printEdges(PrintWriter os) {
-    	os.println("Edges:");
     	for(int i=0; i<vertex.length;i++){
     		for(int j=0; j<vertex.length;j++){
     			//If connection
@@ -254,6 +254,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
+    	System.out.println("Shortest Path");
     	//both vertices have to exist
     	//print to system.err if one does not exist
     	//Set indices if vertex exists
@@ -277,39 +278,57 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     		return -1;
     	}
     	
-    	//For Adj Matrix Multiplication
-    	int[][] mMatrix = new int[vertex.length][vertex.length]; //Store values for multiplied matrix
-    	int[][] outMatrix = new int[vertex.length][vertex.length]; //Store values for final matrix
-    	
-    	for(int i=0;i<vertex.length;i++){
-    		for(int j=0; j<vertex.length;j++){
-    			mMatrix[i][j]=matrix[i][j];
-    		}
-    	}
-    	//CHECK MEEEEEEEE
-    	for(int a=1;a<=vertex.length;a++){
-	    	for(int j=0;j<vertex.length;j++){
-	    		for(int i=0;i<vertex.length;i++){
-	    			int val=0;
-	    			for(int y=0;y<vertex.length;y++){
-	    				val+=mMatrix[y][j]*matrix[i][y];
-	    			}
-	    			outMatrix[i][j]=val;
-	    		}
-	    	}
-	    	for(int i=0;i<vertex.length;i++){
-	    		for(int j=0; j<vertex.length;j++){
-	    			mMatrix[i][j]=outMatrix[i][j];
-	    		}
-	    	}
-	    	if(outMatrix[vert1Index][vert2Index]>=1){
-	    		//Matrix to the power of a+1, distance between 2 nodes, value of which in matrix will be the number of paths from one node to another
-				return a+1;
-			}
-    	}
-    	
+    	int dist[] = new int[vertex.length];
+		Boolean visited[] = new Boolean[vertex.length]; //Vertex visited
+		
+		// Initialize all distances as INFINITE and visited[] as false
+		for (int i = 0; i < vertex.length; i++){
+			dist[i] = Integer.MAX_VALUE; //infinite
+			visited[i] = false;
+		}
+		dist[vert1Index]= 0;
+		for (int count = 0; count < vertex.length-1; count++){
+			// Pick the minimum distance vertex from the set of vertices
+			// not yet processed. u is always equal to src in first
+			// iteration.
+			int u = minDistance(dist, visited);
+			// Mark the picked vertex as processed
+			visited[u] = true;
+			// Update dist value of the adjacent vertices of the
+			// picked vertex.
+			for (int v = 0; v < vertex.length; v++){
+				// Update dist[v] only if is not in sptSet, there is an
+				// edge from u to v, and total weight of path from src to
+				// v through u is smaller than current value of dist[v]
+				if (!visited[v] && matrix[u][v]!=0 &&
+					dist[u] != Integer.MAX_VALUE &&
+					dist[u]+matrix[u][v] < dist[v])
+					dist[v] = dist[u] + matrix[u][v];
+				}
+		}
+		
+		if(dist[vert2Index]>0 && dist[vert2Index]!=Integer.MAX_VALUE){
+			return dist[vert2Index];
+		}
+
         // if we reach this point, source and target are disconnected
         return disconnectedDist;    	
     } // end of shortestPathDistance()
+    
+    int minDistance(int dist[], Boolean visited[])
+    {
+        // Initialize min value
+        int min = Integer.MAX_VALUE, min_index=-1;
+ 
+        for (int v = 0; v < vertex.length; v++)
+            if (visited[v] == false && dist[v] <= min){
+                min = dist[v];
+                min_index = v;
+            }
+ 
+        return min_index;
+    }
+    
+    
     
 } // end of class AdjMatrix
