@@ -191,9 +191,21 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     public void printEdges(PrintWriter os) {
     	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
   		  myLinkedList value = entry.getValue();
-  		  value.printNode();
-  		  System.out.println();
+  		  
+  		Node current = value.getHeadNode();
+		for(int i = 0; i < value.getListCount(); i++){
+			os.printf(current.getVertice() + " ");
+			
+			if (current.getNextNode()!= null){
+				current = current.getNextNode();
+			}
+  		  
+  		  
+//  		  value.printNode();
+  		  
   		}
+		System.out.println();
+    	}
     } // end of printEdges()
     
     
