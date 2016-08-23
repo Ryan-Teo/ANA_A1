@@ -19,6 +19,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 	String newVertice;
 	String sourceVertice;
 	String targetVertice;
+	PrintWriter os = new PrintWriter(System.out,true);
     /**
 	 * Contructs empty graph.
 	 */
@@ -31,7 +32,10 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
         newVertice = (String)vertLabel;
     	Node newVerticeNode = new Node(newVertice, null);
     	myLinkedList newLinkedList = new myLinkedList(newVerticeNode, newVerticeNode, 1);
+    	
     	indexArray.put(indexCount++, newLinkedList);
+    	printEdges(os);
+    	
     } // end of addVertex()
 	
     public int searchVertex(Map<Integer, myLinkedList> arrayMap, String vertLabel){
@@ -48,7 +52,9 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     public void addEdge(T srcLabel, T tarLabel) {
     	int checkKeySource, checkKeyTarget;
     	String source = (String) srcLabel;
+    	System.out.println("Edge Source: " + srcLabel);
     	String target = (String) tarLabel;
+    	System.out.println("Edge Target: " + tarLabel);
     	if(searchVertex(indexArray, source) != -1 && searchVertex(indexArray,target)!= -1){
     		checkKeySource = searchVertex(indexArray, source);
     		checkKeyTarget = searchVertex(indexArray, target);
@@ -75,8 +81,9 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	}
     	else
     	{
-    		System.out.println(">>> Error: Inputted source or target does not exist.");
+    		System.out.println(">>> Error: Inputted source or target does not exist.<<<");
     	}
+    	printEdges(os);
     } // end of addEdge()
 	
 
@@ -172,7 +179,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	}
     	
     	else{
-    		System.out.println(">>> Error: Inputted source or target does not exist.");
+    		System.out.println(">>> Error: Inputted source or target does not exist.!!!");
     	}
    } 
 	
@@ -182,9 +189,9 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
     		  myLinkedList value = entry.getValue();
     		  
-    		  os.printf(value.getHeadNode().getVertice() + " ");
+    		  os.println(value.getHeadNode().getVertice());
+    		 
     	}
-    	System.out.println("\n");
     } // end of printVertices()
 	
     
@@ -194,18 +201,17 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
   		  
   		Node current = value.getHeadNode();
 		for(int i = 0; i < value.getListCount(); i++){
-			os.printf(current.getVertice() + " ");
+			os.printf("%s ",current.getVertice());
 			
-			if (current.getNextNode()!= null){
 				current = current.getNextNode();
-			}
   		  
   		  
 //  		  value.printNode();
   		  
   		}
-		System.out.println();
+		os.println();
     	}
+    	os.println();
     } // end of printEdges()
     
     
