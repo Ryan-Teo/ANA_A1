@@ -52,9 +52,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     public void addEdge(T srcLabel, T tarLabel) {
     	int checkKeySource, checkKeyTarget;
     	String source = (String) srcLabel;
-    	System.out.println("Edge Source: " + srcLabel);
     	String target = (String) tarLabel;
-    	System.out.println("Edge Target: " + tarLabel);
     	if(searchVertex(indexArray, source) != -1 && searchVertex(indexArray,target)!= -1){
     		checkKeySource = searchVertex(indexArray, source);
     		checkKeyTarget = searchVertex(indexArray, target);
@@ -81,7 +79,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	}
     	else
     	{
-    		System.out.println(">>> Error: Inputted source or target does not exist.<<<");
+    		System.err.println(">>> Error: Inputted source or target does not exist.<<<");
     	}
     	printEdges(os);
     } // end of addEdge()
@@ -172,7 +170,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 	    				}
 	    			}
 	    			else{
-	    				System.out.println(">>>Error: Edge does notexists.");
+	    				System.err.println(">>>Error: Edge does notexists.");
 	    			}	
     			}
     		}
@@ -189,8 +187,8 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
     		  myLinkedList value = entry.getValue();
     		  
-    		  os.println(value.getHeadNode().getVertice());
-    		 
+    		  os.print(value.getHeadNode().getVertice());
+    		
     	}
     } // end of printVertices()
 	
