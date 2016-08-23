@@ -1,4 +1,4 @@
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 
@@ -11,283 +11,252 @@ import java.util.*;
  */
 public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
 {
-	/**
-	 * Constructs empty graph.
-	 */
+	private T[] vert;
 	private int[][] matrix;
-	private T[] vertex;
+	private int vertCount;
+	private int arraySize = 10000;
 	
+	/**
+	 * Contructs empty graph.
+	 */
     @SuppressWarnings("unchecked")
 	public AdjMatrix() {
-    	vertex = (T[]) new String[0];
-    	matrix= new int[vertex.length][vertex.length];
+    	vert =  (T[]) new String[arraySize];
+    	matrix = new int[arraySize][arraySize];
+    	vertCount = 0;
     } // end of AdjMatrix()
+    
     
     @SuppressWarnings("unchecked")
 	public void addVertex(T vertLabel) {
-    	int newSize = vertex.length+1;
-    	
-    	//Copy array of vertices to temp array
-    	T[] tempVertex = (T[]) new String[newSize];
-    	for(int i=0;i<vertex.length;i++){
-    		tempVertex[i]=vertex[i];
-    	}
-
-    	//Copy matrix to temp matrix
-    	int[][] tempMatrix = new int[newSize][newSize];
-    	for(int i=0;i<newSize;i++){
-    		for(int j=0; j<newSize;j++){
-    			if(i==vertex.length||j==vertex.length){
-    				//Set added values to 0
-    				tempMatrix[i][j]=0;
-    			}
-    			else{
-    				tempMatrix[i][j]=matrix[i][j];
-    			}
-    		}
-    	}
-    	
-    	//Add new vertex to array of vertices
-    	tempVertex[vertex.length] = vertLabel;
-    	
-    	//Move elements back to original resized arrays
-    	vertex = (T[]) new String[newSize];
-    	for(int i=0;i<newSize;i++){
-    		vertex[i]=tempVertex[i];
-    	}
-    	
-    	matrix = new int[newSize][newSize];
-    	for(int i=0;i<newSize;i++){
-    		for(int j=0; j<newSize;j++){
-    			matrix[i][j]=tempMatrix[i][j];
-    		}
-    	}
-    	
+	 	int vertIndex = -1;
+        for(int i=0 ; i < vertCount ; i++){
+         	if(vertLabel.equals(vert[i])){
+         		vertIndex = i;
+         	}
+        }
+        if(vertIndex == -1){
+			if(vertCount==arraySize){
+				//Temporary array to store vert values
+				T[] tempVert =(T[]) new String[arraySize];
+				for(int i=0 ; i < vertCount ; i++){
+					tempVert[i] = vert[i];
+				}
+				//Temporary array to store matrix values
+				int[][] tempMat = new int[arraySize][arraySize];
+				for(int i=0 ; i < vertCount ; i++){
+					for(int j=0 ; j < vertCount ; j++){
+						tempMat[i][j] = matrix[i][j];
+					}
+				}
+			
+				//Expand array size
+				arraySize += 10000;
+				//Resize vert array
+				vert = (T[]) new String[arraySize];
+				//Copy values back to resized array
+				for(int i=0 ; i < tempVert.length ; i++){
+					vert[i] = tempVert[i];
+				}
+			
+				//Resize matrix array
+				matrix = new int[arraySize][arraySize];
+				//Copy values back to resized matrix
+				for(int i=0 ; i < tempVert.length ; i++){
+					for(int j=0 ; j< tempVert.length ; j++){
+						matrix[i][j] = tempMat[i][j] ;
+					}
+				}
+			}
+			vert[vertCount] = vertLabel;
+			vertCount++;
+		}
     } // end of addVertex()
 	
+    
     public void addEdge(T srcLabel, T tarLabel) {
-    	//both vertices have to exist
-    	//print to system.err if one does not exist
-    	//Set indices if vertex exists
-    	int srcIndex=-1,tarIndex=-1;
-    	for(int i=0; i<vertex.length;i++){
-    		if(vertex[i].equals(srcLabel)){
-    			srcIndex=i;
-    		}
-    		if(vertex[i].equals(tarLabel)){
-    			tarIndex=i;
-    		}
-    	}
-    	if(srcIndex==-1 && tarIndex==-1){
-    		System.err.println("Vertex "+(String)srcLabel+" and "+(String)tarLabel+" do not exist.");
-    		return;
-    	}else if(srcIndex==-1){
-    		System.err.println("Vertex "+(String)srcLabel+" does not exist.");
-    		return;
-    	}else if(tarIndex==-1){
-    		System.err.println("Vertex "+(String)tarLabel+" does not exist.");
-    		return;
-    	}
-
-    	//if edge already exists, do nothing? maybe print out message
-    	if(matrix[srcIndex][tarIndex]==0 && matrix[tarIndex][srcIndex]==0){
-    		matrix[srcIndex][tarIndex] = matrix[tarIndex][srcIndex] = 1;
-    		System.out.println("Edge added!");
-    	}else if(matrix[srcIndex][tarIndex]==1 && matrix[tarIndex][srcIndex]==1){
-    		System.err.println("Edge already exists!");
-    	}else{
-    		//Should never reach here
-    		System.err.println("Something went wrong! (1)");
-    	}
+        int srcIndex = -1, tarIndex= -1;
+        for(int i=0 ; i < vertCount; i++){
+        	if(vert[i].equals(srcLabel)){
+        		srcIndex = i;
+        	}
+        	if(vert[i].equals(tarLabel)){
+        		tarIndex = i;
+        	}
+        }
+        
+        if(srcIndex != -1 && tarIndex != -1){ //If both vertices have been found
+        	matrix[srcIndex][tarIndex] = 1;
+        	matrix[tarIndex][srcIndex] = 1;
+        }
+        else{ //If one of the vertices is not found
+        	System.err.println("One of the vertices doesn't exist");
+            throw new IllegalArgumentException();
+        }
     } // end of addEdge()
+	
 
     public ArrayList<T> neighbours(T vertLabel) {
         ArrayList<T> neighbours = new ArrayList<T>();
+        int vertIndex = -1;
+        for(int i=0 ; i < vertCount ; i++){
+        	if(vertLabel.equals(vert[i])){
+        		vertIndex = i;
+        	}
+        }
         
-        //both vertex has to exist
-    	//print to system.err if does not exist
-    	//Set indices if vertex exists
-    	int vertIndex=-1;
-    	for(int i=0; i<vertex.length;i++){
-    		if(vertex[i].equals(vertLabel)){
-    			vertIndex=i;
-    		}
-    	}
-    	if(vertIndex==-1){
-    		System.err.println("Vertex "+(String)vertLabel+" does not exist.");
-    		return null;
-    	}
-    	
-    	for(int i=0; i<vertex.length;i++){
-    		if(matrix[vertIndex][i]==1 && matrix[i][vertIndex]==1){
-    			neighbours.add(vertex[i]);
-    		}else if(matrix[vertIndex][i]==0 && matrix[i][vertIndex]==0){
-    			continue;
-    		}else{
-    			//Should never reach here
-        		System.err.println("Something went wrong! (2)");
-    		}
-    	}
+        if(vertIndex != -1){ //If vertex exists
+        	for(int i=0 ; i < vertCount ; i++){
+        		if(matrix[vertIndex][i]==1){
+        			neighbours.add(vert[i]);
+        		}
+        	}
+        }
+        else{ //If the vertex is not found
+        	System.err.println("Vertex doesn't exist");
+            throw new IllegalArgumentException();
+        }
         return neighbours;
     } // end of neighbours()
     
     
     @SuppressWarnings("unchecked")
 	public void removeVertex(T vertLabel) {
-    	int newSize = vertex.length-1;
-    	int vertIndex=-1;
-    	for(int i=0; i<vertex.length;i++){
-    		if(vertex[i].equals(vertLabel)){
-    			vertIndex=i;
-    		}
-    	}
-    	if(vertIndex==-1){
-    		System.err.println("Vertex "+(String)vertLabel+" does not exist.");
-    		return;
-    	}
-    	// if i==vert skip
-    	// if i>vert temp[i-1][j]=matrix[i][j]
-    	// remove from vertex array
-    	T[] tempVertex = (T[]) new String[newSize];
-    	for(int i=0;i<vertex.length;i++){
-    		if(i==vertIndex){
-    			continue;
-    		}else if(i>vertIndex){
-    			tempVertex[i-1]=vertex[i];
-    		}else{
-    			tempVertex[i]=vertex[i];
-    		}
-    	}
-
-    	//remove from matrix
-    	int[][] tempMatrix = new int[newSize][newSize];
-    	for(int i=0;i<vertex.length;i++){
-    		for(int j=0;j<vertex.length;j++){
-    			if(i==vertIndex || j==vertIndex){
-        			continue;
-        		}else if(i>vertIndex){
-        			if(j>vertIndex){
-            			tempMatrix[i-1][j-1]=matrix[i][j];
-        			}else{
-        				tempMatrix[i-1][j]=matrix[i][j];
-        			}
-        		}else if(j>vertIndex){
-        			if(i>vertIndex){
-            			tempMatrix[i-1][j-1]=matrix[i][j];
-        			}else{
-        				tempMatrix[i][j-1]=matrix[i][j];
-        			}
-        		}else{
-        			tempMatrix[i][j]=matrix[i][j];
-        		}
-    		}
-    	}
-    	//Move elements back to original resized arrays
-    	vertex = (T[]) new String[newSize];
-    	matrix = new int[newSize][newSize];
-    	for(int i=0;i<newSize;i++){
-    		vertex[i]=tempVertex[i];
-    	}
-    	for(int i=0;i<newSize;i++){
-    		for(int j=0; j<newSize;j++){
-    			matrix[i][j]=tempMatrix[i][j];
-    		}
-    	}
+    	 int vertIndex = -1;
+         for(int i=0 ; i < vertCount ; i++){
+         	if(vertLabel.equals(vert[i])){
+         		vertIndex = i;
+         	}
+         }
+         
+         if(vertIndex != -1){ //If vertex exists
+        	 //Copy vert array to temp array
+        	 T[] tempVert = (T[]) new String[vertCount];
+        	 for(int i=0 ; i < tempVert.length ; i++){
+        		 tempVert[i] = vert[i];
+        	 }
+        	 
+        	 //Copy matrix array to temp matrix
+        	 int[][] tempMat = new int[vertCount][vertCount];
+        	 for(int i=0 ; i < tempVert.length ; i++){
+     			for(int j=0 ; j< tempVert.length ; j++){
+     				tempMat[i][j] = matrix[i][j];
+     			}
+        	 }
+        	 
+        	 //Copying values back without deleted vertex
+        	 for(int i=0 ; i < tempVert.length ; i++){
+        		 if(i<vertIndex){
+        			 vert[i] = tempVert[i];
+        		 }
+        		 else if(i == vertIndex){
+        			 continue;
+        		 }
+        		 else{ //Any vertex coming after the deleted vertex
+        			 vert[i-1] = tempVert[i];
+        		 }
+        	 }
+        	 
+        	 for(int i=0 ; i < tempVert.length ; i++){
+      			for(int j=0 ; j< tempVert.length ; j++){
+      				if(i<vertIndex && j<vertIndex){
+      					 matrix[i][j] = tempMat[i][j];
+      				}
+      				else if(i == vertIndex || j == vertIndex){
+      					continue;
+      				}
+      				else if(i > vertIndex && j > vertIndex){
+      					matrix[i-1][j-1] = tempMat[i][j];
+      				}
+      				else if(i > vertIndex){
+      					matrix[i-1][j] = tempMat[i][j];
+      				}
+      				else if(j > vertIndex){
+      					matrix[i][j-1] = tempMat[i][j];
+      				}
+      			}
+         	 }
+             vertCount--;
+         }
+         else{ //If the vertex is not found
+         	System.err.println("Vertex doesn't exist");
+         	throw new IllegalArgumentException();
+         }
     } // end of removeVertex()
 	
     
     public void removeEdge(T srcLabel, T tarLabel) {
-    	//both vertices have to exist
-    	//print to system.err if one does not exist
-    	//Set indices if vertex exists
-    	int srcIndex=-1,tarIndex=-1;
-    	for(int i=0; i<vertex.length;i++){
-    		if(vertex[i].equals(srcLabel)){
-    			srcIndex=i;
-    		}
-    		if(vertex[i].equals(tarLabel)){
-    			tarIndex=i;
-    		}
-    	}
-    	if(srcIndex==-1 && tarIndex==-1){
-    		System.err.println("Vertex "+(String)srcLabel+" and "+(String)tarLabel+" do not exist.");
-    		return;
-    	}else if(srcIndex==-1){
-    		System.err.println("Vertex "+(String)srcLabel+" does not exist.");
-    		return;
-    	}else if(tarIndex==-1){
-    		System.err.println("Vertex "+(String)tarLabel+" does not exist.");
-    		return;
-    	}
-
-    	//if edge already exists, do nothing? maybe print out message
-    	if(matrix[srcIndex][tarIndex]==1 && matrix[tarIndex][srcIndex]==1){
-    		matrix[srcIndex][tarIndex] = matrix[tarIndex][srcIndex] = 0;
-    		System.out.println("Edge removed!");
-    	}else if(matrix[srcIndex][tarIndex]==0 && matrix[tarIndex][srcIndex]==0){
-    		System.err.println("Edge does not exist!");
-    	}else{
-    		//Should never reach here
-    		System.err.println("Something went wrong! (1)");
-    	}
+    	int srcIndex = -1, tarIndex= -1;
+        for(int i=0 ; i < vertCount; i++){
+        	if(vert[i].equals(srcLabel)){
+        		srcIndex = i;
+        	}
+        	if(vert[i].equals(tarLabel)){
+        		tarIndex = i;
+        	}
+        }
+        
+        if(srcIndex != -1 && tarIndex != -1){ //If both vertices have been found
+        	if(matrix[srcIndex][tarIndex] == 1 && matrix[tarIndex][srcIndex] == 1){
+        		matrix[srcIndex][tarIndex] = 0;
+        		matrix[tarIndex][srcIndex] = 0;
+        	}
+        	else if(matrix[srcIndex][tarIndex] == 0 && matrix[tarIndex][srcIndex] == 0){
+        		System.err.println("Edge doesn't exist in the graph");
+        	}
+        	else{
+        		System.err.println("Unexpected Error (1)"); //EXTRA PRINTING
+        	}
+        }
+        else{ //If one of the vertices is not found
+        	System.err.println("One of the vertices doesn't exist");
+         	throw new IllegalArgumentException();
+        }
     } // end of removeEdges()
 	
     
     public void printVertices(PrintWriter os) {
-    	for(int i=0; i<vertex.length;i++){
-        	os.println(vertex[i]);
-    	}
+        for(int i=0 ; i < vertCount ; i++){
+        	os.println(vert[i]);
+        }
     } // end of printVertices()
 	
     
     public void printEdges(PrintWriter os) {
-    	for(int i=0; i<vertex.length;i++){
-    		for(int j=0; j<vertex.length;j++){
-    			//If connection
-    			if(matrix[i][j]==1){
-    				os.printf("%s %s\n", vertex[i],vertex[j]);
-    			}
+        for(int i=0 ; i < vertCount ; i++){
+        	for(int j=0 ; j < vertCount ; j++){
+        		if(matrix[i][j]==1){
+        			os.printf("%s %s\n", vert[i], vert[j]);
+        		}
         	}
-    	}
-    	os.println();
+        }
     } // end of printEdges()
     
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
-    	System.out.println("Shortest Path");
     	//both vertices have to exist
     	//print to system.err if one does not exist
     	//Set indices if vertex exists
-    	int vert1Index=-1,vert2Index=-1;
-    	for(int i=0; i<vertex.length;i++){
-    		if(vertex[i].equals(vertLabel1)){
-    			vert1Index=i;
-    		}
-    		if(vertex[i].equals(vertLabel2)){
-    			vert2Index=i;
-    		}
-    	}
-    	if(vert1Index==-1 && vert2Index==-1){
-    		System.err.println("Vertex "+(String)vertLabel1+" and "+(String)vertLabel2+" do not exist.");
-    		return -1;
-    	}else if(vert1Index==-1){
-    		System.err.println("Vertex "+(String)vertLabel1+" does not exist.");
-    		return -1;
-    	}else if(vert2Index==-1){
-    		System.err.println("Vertex "+(String)vertLabel2+" does not exist.");
-    		return -1;
-    	}
-    	
-    	int dist[] = new int[vertex.length];
-		Boolean visited[] = new Boolean[vertex.length]; //Vertex visited
+    	int vert1Index = -1, vert2Index= -1;
+        for(int i=0 ; i < vertCount; i++){
+        	if(vert[i].equals(vertLabel1)){
+        		vert1Index = i;
+        	}
+        	if(vert[i].equals(vertLabel2)){
+        		vert2Index = i;
+        	}
+        }
+    
+    	int dist[] = new int[vertCount];
+		Boolean visited[] = new Boolean[vertCount]; //Vertex visited
 		
 		// Initialize all distances as INFINITE and visited[] as false
-		for (int i = 0; i < vertex.length; i++){
+		for (int i = 0; i < vertCount; i++){
 			dist[i] = Integer.MAX_VALUE; //infinite
 			visited[i] = false;
 		}
 		dist[vert1Index]= 0;
-		for (int count = 0; count < vertex.length-1; count++){
+		for (int count = 0; count < vertCount-1; count++){
 			// Pick the minimum distance vertex from the set of vertices
 			// not yet processed. u is always equal to src in first
 			// iteration.
@@ -296,7 +265,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
 			visited[u] = true;
 			// Update dist value of the adjacent vertices of the
 			// picked vertex.
-			for (int v = 0; v < vertex.length; v++){
+			for (int v = 0; v < vertCount; v++){
 				// Update dist[v] only if is not in sptSet, there is an
 				// edge from u to v, and total weight of path from src to
 				// v through u is smaller than current value of dist[v]
@@ -320,7 +289,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
         // Initialize min value
         int min = Integer.MAX_VALUE, min_index=-1;
  
-        for (int v = 0; v < vertex.length; v++)
+        for (int v = 0; v < vertCount; v++)
             if (visited[v] == false && dist[v] <= min){
                 min = dist[v];
                 min_index = v;
@@ -328,7 +297,5 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
  
         return min_index;
     }
-    
-    
     
 } // end of class AdjMatrix
