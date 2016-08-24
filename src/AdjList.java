@@ -14,7 +14,9 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
        
 	
 	Map<Integer, myLinkedList> indexArray;
-	Map<Integer, myLinkedList> indexArrayCopy = indexArray;
+	Map<String, Integer> indexShort;
+	Map<String, Integer> indexCheck;
+	int shortCount = 0;
 	int indexCount = 0;
 	String newVertice;
 	String sourceVertice;
@@ -32,9 +34,9 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
         newVertice = (String)vertLabel;
     	Node newVerticeNode = new Node(newVertice, null);
     	myLinkedList newLinkedList = new myLinkedList(newVerticeNode, newVerticeNode, 1);
-    	
-    	indexArray.put(indexCount++, newLinkedList);
-    	printEdges(os);
+    	if(searchVertex(indexArray, newVertice) == -1){
+    		indexArray.put(indexCount++, newLinkedList);
+    	}
     	
     } // end of addVertex()
 	
@@ -43,7 +45,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	
     	for (Entry<Integer, myLinkedList> entry : arrayMap.entrySet()) {
     		myLinkedList list = entry.getValue();
-      	    if(vertLabel == list.getHeadNode().getVertice()){
+      	    if(vertLabel.equalsIgnoreCase(list.getHeadNode().getVertice())){
       	    	key = entry.getKey();
       	    }
     	}    
@@ -79,9 +81,8 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	}
     	else
     	{
-    		System.err.println(">>> Error: Inputted source or target does not exist.<<<");
+    		System.out.println(srcLabel.toString()+" :"+tarLabel.toString()+">>> Error: Inputted source or target does not exist.<<<");
     	}
-    	printEdges(os);
     } // end of addEdge()
 	
 
@@ -98,9 +99,9 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
       			Integer key = entry.getKey();
       			if(key == checkKey){
       				myLinkedList list = entry.getValue();
-      				if (list.getHeadNode().getVertice() == vertex){
+      				if (list.getHeadNode().getVertice().equalsIgnoreCase(vertex)){
       					current = list.getHeadNode();
-      					neighbours.add((T) current.getVertice());
+      					
       					for(int i = 0; i < list.getListCount()-1; i++){
       						if (current == list.getTailNode()){
       							break;
@@ -187,9 +188,10 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
     		  myLinkedList value = entry.getValue();
     		  
-    		  os.print(value.getHeadNode().getVertice());
+    		  os.print(value.getHeadNode().getVertice() + " ");
     		
     	}
+    	os.println();
     } // end of printVertices()
 	
     
@@ -198,11 +200,11 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
   		  myLinkedList value = entry.getValue();
   		  
   		Node current = value.getHeadNode();
-		for(int i = 0; i < value.getListCount(); i++){
-			os.printf("%s ",current.getVertice());
-			
+  		if(current != value.getTailNode()){
+  			for(int i = 0; i < value.getListCount(); i++){
+				os.printf("%s ",current.getVertice());
 				current = current.getNextNode();
-  		  
+	  		}
   		  
 //  		  value.printNode();
   		  
@@ -214,13 +216,236 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
-    
+    	String vert1 = (String) vertLabel1;
+    	String vert2 = (String) vertLabel2;
+    	Node source = null;
+    	Node target = null;
+    	Map<Node, Boolean> vis = new HashMap<Node, Boolean>();
+    	Map<Node, Node> prev = new HashMap<Node, Node>();
+    	
+    	
+    	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+    		myLinkedList list = entry.getValue();
+      	    if(vert1.equalsIgnoreCase(list.getHeadNode().getVertice())){
+      	    	source = list.getHeadNode();
+      	    }
+      	    else if (vert2.equalsIgnoreCase(list.getHeadNode().getVertice())){
+      	    	target = list.getHeadNode();
+      	    }
+    	}    
+    	
+    	    myLinkedList directions = new myLinkedList(null, null, 0);
+    	    Queue q = (Queue) new myLinkedList(null, null, 0);
+    	    Node current = source;
+    	    q.add(current);
+    	    vis.put(current, true);
+    	    while(!q.isEmpty()){
+    	        current = q.remove();
+    	        if (current.equals(target)){
+    	            break;
+    	        }else{
+    	            for(Node node : current.getOutNodes()){
+    	                if(!vis.contains(node)){
+    	                    q.add(node);
+    	                    vis.put(node, true);
+    	                    prev.put(node, current);
+    	                }
+    	            }
+    	        }
+    	    }
+    	    if (!current.equals(finish)){
+    	        System.out.println("can't reach destination");
+    	    }
+    	    for(Node node = finish; node != null; node = prev.get(node)) {
+    	        directions.add(node);
+    	    }
+    	    directions.reverse();
+    	
+    	
+    	
+//    	 int n = indexArray.size();
+//
+//         // dist[i] is the distance from v to i
+//         int[] dist = new int[n];
+//         for (int i = 0; i < n; i++) {
+//             dist[i] = Integer.MAX_VALUE;
+//         }
+//
+//         // seen[i] is true if there is a path from v to i
+//         boolean[] seen = new boolean[n];
+//
+//         dist[v] = 0;
+//
+//         // determine n-1 paths from v
+//         for (int j = 0; j < n; j++) {
+//             // choose closest unseen vertex
+//             int u = -1;
+//
+//             for (int k = 0; k < n; k++) {
+//                 if (!seen[k]) {
+//                     // check if u needs updating
+//                     if (u < 0 || dist[k] < dist[u]) {
+//                         u = k;
+//                     }
+//                 }
+//             }
+//
+//             if (u < 0 || dist[u] == Integer.MAX_VALUE) {
+//                 break;
+//             }
+//
+//             // at this point dist[u] is the cost of the
+//             // shortest path from v to u
+//
+//             // set seen[u] to true and update the distances
+//             seen[u] = true;
+//
+//             for (Edge e : edges[u]) {
+//                 int nbr = e.getTarget();
+//                 int altDist = dist[u] + e.getCost();
+//                 dist[nbr] = Math.min(dist[nbr], altDist);
+//             }
+//         }
+
+
     	
     	
     	
     	
     	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+//    	String vert1 = (String) vertLabel1;
+//    	String vert2 = (String) vertLabel2;
+//    	String source = null;
+//    	myLinkedList sourceList = null;
+//    	
+//    	if(searchVertex(indexArray,vert1) != -1 && searchVertex(indexArray,vert2) != -1){
+//    		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+//        		myLinkedList list = entry.getValue();
+//          	    if(vert1.equalsIgnoreCase(list.getHeadNode().getVertice())){
+//          	    	source = vert1;
+//          	    	sourceList = list;
+//          	    }
+//        	}    
+//    	
+//    		indexShort.put(sourceList.getHeadNode().getVertice(), 0);
+//    		Node current = null;
+//    		{}while()
+//    			
+//    	}
+//    		
+//    		
+//    		
+//    	}
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+       	//both vertices have to exist
+    	//print to system.err if one does not exist
+    	//Set indices if vertex exists
+//    	
+//    	String vert1 = (String) vertLabel1;
+//    	String vert2 = (String) vertLabel2;
+//    	int vert1Key = -1;
+//    	int vert2Key = -1;
+//    	
+//    	int indexCount = indexArray.size();
+//    	if(searchVertex(indexArray,vert1) != -1 && searchVertex(indexArray,vert2) != -1){
+//    		vert1Key = searchVertex(indexArray, vert1);
+//    		vert2Key = searchVertex(indexArray, vert2);
+//    		int dfs = -1;
+//    		int infinite = Integer.MAX_VALUE;
+//    		myLinkedList list = null; 
+//    		
+//    		int dist[] = new int[indexCount];
+//    		Boolean visited[] = new Boolean[indexCount]; //Vertex visited
+//    		
+//    		// Initialize all distances as INFINITE and visited[] as false
+//    		for (int i = 0; i < indexCount; i++){
+//    			dist[i] = Integer.MAX_VALUE; //infinite
+//    			visited[i] = false;
+//    		}
+//    		dist[vert1Key]= 0;
+//    		
+//    		
+//    		for (int i=0 ; i < indexCount-1 ; i++){
+//    			dfs = minDistance(dist, visited);
+//    			
+//    			visited[dfs] = true;
+//    			
+//    			
+//    			for (int x=0 ; x < indexCount ; x++){
+//    				for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+//    	    			Integer key = entry.getKey();
+//    	    			if(key == x){
+//    	    				list = entry.getValue();
+//    	    			}
+//    				}
+//    				
+//    				for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+//    	    			Integer key = entry.getKey();
+//    	    			if(key == dfs){
+//    	    				list = entry.getValue();
+//    	    			}
+//        			}	
+//    				
+//    				if (visited[x] == false && dist[dfs] != infinite && dist[dfs] + matrix[dfs][x] < dist[x]){
+//    					dist[x] = dist[dfs] + matrix[dfs][x];
+//    				}
+//    			}
+//    		}
+//    		if(dist[vert1Key] > 0 && dist[vert2Key] != infinite){
+//    			return dist[vert2Key];
+//    		}
+//        }
+//    		
+//    	
+//    	
+//    	
+    	 //Distance between vertex and itself is 0
+		
+        // if we reach this point, source and target are disconnected
         return disconnectedDist;    	
     } // end of shortestPathDistance()
     
+int minDistance(int dist[], Boolean visited[])
+{
+    // Initialize min value
+    int min = Integer.MAX_VALUE, min_index=-1;
+    indexCount = indexArray.size();
+    for (int v = 0; v < indexCount; v++)
+        if (visited[v] == false && dist[v] <= min){
+            min = dist[v];
+            min_index = v;
+        }
+
+    return min_index;
+}
 } // end of class AdjList
