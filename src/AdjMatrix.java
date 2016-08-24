@@ -237,7 +237,8 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     	//both vertices have to exist
     	//print to system.err if one does not exist
     	//Set indices if vertex exists
-    	int vert1Index = -1, vert2Index= -1;
+    	int vert1Index = -1, vert2Index= -1, dfs; //dfs = Distance from source
+    	int infinite = Integer.MAX_VALUE;
         for(int i=0 ; i < vertCount; i++){
         	if(vert[i].equals(vertLabel1)){
         		vert1Index = i;
@@ -247,38 +248,30 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
         	}
         }
     
-    	int dist[] = new int[vertCount];
-		Boolean visited[] = new Boolean[vertCount]; //Vertex visited
-		
-		// Initialize all distances as INFINITE and visited[] as false
-		for (int i = 0; i < vertCount; i++){
-			dist[i] = Integer.MAX_VALUE; //infinite
-			visited[i] = false;
-		}
-		dist[vert1Index]= 0;
-		for (int count = 0; count < vertCount-1; count++){
-			// Pick the minimum distance vertex from the set of vertices
-			// not yet processed. u is always equal to src in first
-			// iteration.
-			int u = minDistance(dist, visited);
-			// Mark the picked vertex as processed
-			visited[u] = true;
-			// Update dist value of the adjacent vertices of the
-			// picked vertex.
-			for (int v = 0; v < vertCount; v++){
-				// Update dist[v] only if is not in sptSet, there is an
-				// edge from u to v, and total weight of path from src to
-				// v through u is smaller than current value of dist[v]
-				if (!visited[v] && matrix[u][v]!=0 &&
-					dist[u] != Integer.MAX_VALUE &&
-					dist[u]+matrix[u][v] < dist[v])
-					dist[v] = dist[u] + matrix[u][v];
+        if(vert1Index != -1 && vert2Index != -1){
+	    	int dist[] = new int[vertCount];
+			Boolean visited[] = new Boolean[vertCount]; //Vertex visited
+			for (int i = 0 ; i < vertCount ; i++){
+				dist[i] = infinite; //init as infinite to show not reached yet
+				visited[i] = false;
+			}
+			dist[vert1Index]= 0; //Distance between vertex and itself is 0
+			for (int i=0 ; i < vertCount-1 ; i++){
+				dfs = minDistance(dist, visited);
+				visited[dfs] = true;
+				for (int x=0 ; x < vertCount ; x++){
+					// Update dist[v] only if is not in sptSet, there is an
+					// edge from u to v, and total weight of path from src to
+					// v through u is smaller than current value of dist[v]
+					if (visited[x] == false && matrix[dfs][x] != 0 && dist[dfs] != infinite && dist[dfs] + matrix[dfs][x] < dist[x]){
+						dist[x] = dist[dfs] + matrix[dfs][x];
+					}
 				}
-		}
-		
-		if(dist[vert2Index]>0 && dist[vert2Index]!=Integer.MAX_VALUE){
-			return dist[vert2Index];
-		}
+			}
+			if(dist[vert2Index] > 0 && dist[vert2Index] != infinite){
+				return dist[vert2Index];
+			}
+        }
 
         // if we reach this point, source and target are disconnected
         return disconnectedDist;    	
@@ -289,10 +282,10 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
         // Initialize min value
         int min = Integer.MAX_VALUE, min_index=-1;
  
-        for (int v = 0; v < vertCount; v++)
-            if (visited[v] == false && dist[v] <= min){
-                min = dist[v];
-                min_index = v;
+        for (int i=0 ; i < vertCount ; i++)
+            if (visited[i] == false && dist[i] <= min){
+                min = dist[i];
+                min_index = i;
             }
  
         return min_index;
