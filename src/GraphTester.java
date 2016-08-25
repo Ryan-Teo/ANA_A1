@@ -10,7 +10,7 @@ import java.lang.String;
  * There should be no need to change this for task A.  If you need to make changes for task B, please make a copy, then modify the copy for task B.
  * 
  * @author Jeffrey Chan, 2016.
- *///
+ */
 public class GraphTester
 {
 	/** Name of class, used in error messages. */
