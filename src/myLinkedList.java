@@ -97,28 +97,6 @@ public class myLinkedList {
 		
 	}
 	
-	public boolean removeVerticeNode(String removeVertice){
-		Node current = null;
-		
-		if (headNode.getVertice().equalsIgnoreCase(removeVertice) && headNode == tailNode){
-			headNode = tailNode = null;
-			return true;
-		}
-		
-		else if (headNode.getVertice().equalsIgnoreCase(removeVertice) && headNode != tailNode){
-			current = headNode.getNextNode();
-			for(int i = 0; i < listCount - 1; i++){
-				headNode.setNextNode(current.getNextNode());
-				current = null;
-				current = headNode.getNextNode();
-			}
-			headNode = tailNode = null;
-			listCount = 0;
-			return true;
-		}
-		return false;
-		
-	}
 	public boolean searchNode(String searchValue){
 		Node current = headNode;
 		for(int i = 0; i < listCount; i++){
@@ -130,17 +108,5 @@ public class myLinkedList {
 			}
 		}
 		return false;
-	}
-	public boolean printNode(){
-		Node current = headNode;
-			for(int i = 0; i < listCount; i++){
-				System.out.printf(current.getVertice());
-				if (current.getNextNode()!= null){
-					current = current.getNextNode();
-				}
-				else
-					return true;
-			};
-		return true;
 	}
 }

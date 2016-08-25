@@ -19,7 +19,6 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 	String newVertice;
 	String sourceVertice;
 	String targetVertice;
-	PrintWriter os = new PrintWriter(System.out,true);
     /**
 	 * Contructs empty graph.
 	 */
@@ -72,51 +71,48 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     					}	
     				}	
     				else{
-    					System.out.println(">>>Error: Edge already exists.");
+    					System.err.println(">>> Error: Edge already exists.");
     				}
     			}
     		}
     	}
-    	else
-    	{
-    		System.out.println(srcLabel.toString()+" :"+tarLabel.toString()+">>> Error: Inputted source or target does not exist.<<<");
+    	else{
+    		System.err.println(">>> Error: Inputted source or target does not exist.<<<");
+    		throw new IllegalArgumentException();
     	}
     } // end of addEdge()
 	
 
     @SuppressWarnings("unchecked")
 	public ArrayList<T> neighbours(T vertLabel) {
-    	  ArrayList<T> neighbours = new ArrayList<T>();
-          String vertex = (String) vertLabel;
-          int checkKey;
-          Node current = null;
-          
-          if(searchVertex(indexArray, vertex) != -1){
-      		checkKey = searchVertex(indexArray, vertex);
-      		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
-      			Integer key = entry.getKey();
-      			if(key == checkKey){
-      				myLinkedList list = entry.getValue();
-      				if (list.getHeadNode().getVertice().equalsIgnoreCase(vertex)){
-      					current = list.getHeadNode();
-      					
-      					for(int i = 0; i < list.getListCount()-1; i++){
-      						if (current == list.getTailNode()){
-      							break;
-      						}
-      						current = current.getNextNode();
-      						String newVertex = current.getVertice();
-  	    					neighbours.add((T) newVertex);
-      					}
-      				}
-      			}
-      		}
-      	}
-         for (int i = 0; i < neighbours.size(); i++) {
-        	 System.out.printf(neighbours.get(i) + " ");
-        	
-  		}
-         System.out.println();
+    	ArrayList<T> neighbours = new ArrayList<T>();
+    	String vertex = (String) vertLabel;
+    	int checkKey;
+    	Node current = null;
+  
+    	if(searchVertex(indexArray, vertex) != -1){
+    		checkKey = searchVertex(indexArray, vertex);
+    		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+    			Integer key = entry.getKey();
+    			if(key == checkKey){
+    				myLinkedList list = entry.getValue();
+    				if (list.getHeadNode().getVertice().equalsIgnoreCase(vertex)){
+    					current = list.getHeadNode();
+    					for(int i = 0; i < list.getListCount()-1; i++){
+    						if (current == list.getTailNode()){
+    							break;
+    						}
+    						current = current.getNextNode();
+    						String newVertex = current.getVertice();
+    						neighbours.add((T) newVertex);
+    					}
+    				}
+    			}
+    		}
+    	}
+    	else{
+    		throw new IllegalArgumentException();
+    	}
         return neighbours;
     } // end of neighbours()
     
@@ -126,8 +122,8 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	int checkKey = -1;
     	
     	if(searchVertex(indexArray, removeVert) != -1){
-    	checkKey = searchVertex(indexArray,removeVert);
-    				indexArray.remove(checkKey);
+    		checkKey = searchVertex(indexArray,removeVert);
+    		indexArray.remove(checkKey);
     		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
     			myLinkedList list = entry.getValue();
     			String source = list.getHeadNode().getVertice();
@@ -135,6 +131,9 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     				list.removeEdgeNode(source, removeVert);
     			}
     		}
+    	}
+    	else{
+    		throw new IllegalArgumentException();
     	}
     			
     }
@@ -161,55 +160,47 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     		    				list = entry1.getValue();
     		    				for (int i = 0; i < list.getListCount(); i++){
     		    					if(list.searchNode(source) == true){
-    		    					
-    		    					list.removeEdgeNode(target, source);
+    		    						list.removeEdgeNode(target, source);
     		    					}
     		    				}	
     		    			}
 	    				}
 	    			}
 	    			else{
-	    				System.err.println(">>>Error: Edge does notexists.");
+	    				System.err.println(">>> Error: Edge does not exist.");
 	    			}	
     			}
     		}
     	}
-    	
     	else{
-    		System.out.println(">>> Error: Inputted source or target does not exist.!!!");
+    		System.err.println(">>> Error: Inputted source or target does not exist.!!!");
+    		throw new IllegalArgumentException();
     	}
    } 
 	
     
     public void printVertices(PrintWriter os) {
-    	
     	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
     		  myLinkedList value = entry.getValue();
-    		  
-    		  os.print(value.getHeadNode().getVertice() + " ");
-    		
+    		  os.printf("%s \n",value.getHeadNode().getVertice());	
     	}
-    	os.println();
     } // end of printVertices()
 	
     
     public void printEdges(PrintWriter os) {
-    	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
-  		  myLinkedList value = entry.getValue();
-  		  
-  		Node current = value.getHeadNode();
-  		if(current != value.getTailNode()){
-  			for(int i = 0; i < value.getListCount(); i++){
-				os.printf("%s ",current.getVertice());
+		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+			myLinkedList value = entry.getValue();
+			Node current = value.getHeadNode();
+			if(current != value.getTailNode()){
+				String orig = current.getVertice();
 				current = current.getNextNode();
-	  		}
-  		  
-//  		  value.printNode();
-  		  
-  		}
-		os.println();
-    	}
-    	os.println();
+				for(int i = 1; i < value.getListCount(); i++){
+					os.printf("%s %s\n",orig, current.getVertice());
+					current = current.getNextNode();
+				}
+			// value.printNode();
+			}
+		}
     } // end of printEdges()
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
@@ -223,22 +214,13 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	String dfs; //dfs = Distance from source
     	int infinite = Integer.MAX_VALUE;
         	
-        if(searchVertex(indexArray, (String)vertLabel1) != -1 && searchVertex(indexArray, (String)vertLabel2)!= -1){
+        if(searchVertex(indexArray, (String)vertLabel2) != -1 && searchVertex(indexArray, (String)vertLabel1)!= -1){
 			for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
 		  		  myLinkedList value = entry.getValue();
 		  		  dist.put(value.getHeadNode().getVertice(), infinite);
 		  		  visited.put(value.getHeadNode().getVertice(), 0);	  
 			}
-			dist.put((String) vertLabel1, 0);
-//			int vert1key = searchVertex(indexArray, (String) vertLabel1);
-//			for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
-//				int key = entry.getKey();
-//		  		if (vert1key == key){
-//		  		  myLinkedList value = entry.getValue();
-//		  		  dist.put(value.getHeadNode().getVertice(), 0);
-//		  		}
-//			}
-			
+			dist.put((String) vertLabel2, 0);
 			for (int i=0 ; i < indexArray.size() ; i++){
 				dfs = minDistance(dist, visited);
 				visited.put(dfs, 1);
@@ -260,9 +242,12 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 					}
 		        }
 			}
-			if(dist.get((String)vertLabel2) > 0 && dist.get((String)vertLabel2) != infinite){
-				return dist.get((String)vertLabel2);
+			if(dist.get((String)vertLabel1) > 0 && dist.get((String)vertLabel1) != infinite){
+				return dist.get((String)vertLabel1);
 			}
+        }
+        else{
+    		throw new IllegalArgumentException();
         }
 
         // if we reach this point, source and target are disconnected
