@@ -8,7 +8,7 @@ import java.util.Map.Entry;
  * Your task is to complete the implementation of this class.  You may add methods, but ensure your modified class compiles and runs.
  *
  * @author Jeffrey Chan, 2016.
- */
+ *///
 public class AdjList <T extends Object> implements FriendshipGraph<T>
 {   
 	Map<Integer, myLinkedList> indexArray;
