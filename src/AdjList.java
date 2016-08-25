@@ -8,18 +8,18 @@ import java.util.Map.Entry;
  * Your task is to complete the implementation of this class.  You may add methods, but ensure your modified class compiles and runs.
  *
  * @author Jeffrey Chan, 2016.
- *///
+ */
 public class AdjList <T extends Object> implements FriendshipGraph<T>
 {   
+       
+	
 	Map<Integer, myLinkedList> indexArray;
-	Map<String, Integer> indexShort;
-	Map<String, Integer> indexCheck;
-
-	int shortCount = 0;
+	Map<Integer, myLinkedList> indexArrayCopy = indexArray;
 	int indexCount = 0;
 	String newVertice;
 	String sourceVertice;
 	String targetVertice;
+	PrintWriter os = new PrintWriter(System.out,true);
     /**
 	 * Contructs empty graph.
 	 */
@@ -72,16 +72,14 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     					}	
     				}	
     				else{
-    					System.err.println(">>> Error: Edge already exists.");
-    					throw new IllegalArgumentException();
+    					System.out.println(">>>Error: Edge already exists.");
     				}
     			}
     		}
     	}
     	else
     	{
-    		System.err.println(srcLabel.toString()+" :"+tarLabel.toString()+">>> Error: Inputted source or target does not exist.<<<");
-    		throw new IllegalArgumentException();
+    		System.out.println(srcLabel.toString()+" :"+tarLabel.toString()+">>> Error: Inputted source or target does not exist.<<<");
     	}
     } // end of addEdge()
 	
@@ -114,6 +112,11 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
       			}
       		}
       	}
+         for (int i = 0; i < neighbours.size(); i++) {
+        	 System.out.printf(neighbours.get(i) + " ");
+        	
+  		}
+         System.out.println();
         return neighbours;
     } // end of neighbours()
     
@@ -166,16 +169,14 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 	    				}
 	    			}
 	    			else{
-	    				System.err.println(">>> Error: Edge does not exist.");
-	    				throw new IllegalArgumentException();
+	    				System.err.println(">>>Error: Edge does notexists.");
 	    			}	
     			}
     		}
     	}
     	
     	else{
-    		System.err.println(">>> Error: Inputted source or target does not exist.");
-    		throw new IllegalArgumentException();
+    		System.out.println(">>> Error: Inputted source or target does not exist.!!!");
     	}
    } 
 	
@@ -185,30 +186,33 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
     		  myLinkedList value = entry.getValue();
     		  
-    		  os.printf("%s\n", value.getHeadNode().getVertice());
+    		  os.print(value.getHeadNode().getVertice() + " ");
     		
     	}
+    	os.println();
     } // end of printVertices()
 	
     
     public void printEdges(PrintWriter os) {
-		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
-			myLinkedList value = entry.getValue();
-			Node current = value.getHeadNode();
-			if(current != value.getTailNode()){
-				String orig = current.getVertice();
+    	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+  		  myLinkedList value = entry.getValue();
+  		  
+  		Node current = value.getHeadNode();
+  		if(current != value.getTailNode()){
+  			for(int i = 0; i < value.getListCount(); i++){
+				os.printf("%s ",current.getVertice());
 				current = current.getNextNode();
-				for(int i = 1; i < value.getListCount(); i++){
-					os.printf("%s %s\n",orig, current.getVertice());
-					current = current.getNextNode();
-				}
-			// value.printNode();
-			}
-		}
+	  		}
+  		  
+//  		  value.printNode();
+  		  
+  		}
+		os.println();
+    	}
+    	os.println();
     } // end of printEdges()
     
-    
-	public int shortestPathDistance(T vertLabel1, T vertLabel2) {
+    public int shortestPathDistance(T vertLabel1, T vertLabel2) {
 		Map<String, Integer> dist; //Distance of vertex from source
 		Map<String, Integer> visited; //Vertex visited
 		dist = new HashMap<String, Integer>();
@@ -283,4 +287,5 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
  
         return minString;
     }
+  
 } // end of class AdjList

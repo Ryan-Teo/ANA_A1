@@ -54,11 +54,11 @@ public class myLinkedList {
 		Node current = headNode;
 		Node previous = null;
 		Boolean result = false;
-		if (current.getVertice() == source && current != tailNode){
+		if (current.getVertice().equalsIgnoreCase(source) && current != tailNode){
 			previous = current;
 			current = current.getNextNode();
 			for(int i = 0; i < listCount -1 ; i++){
-				if (current.getVertice() == (target) && current != tailNode){
+				if (current.getVertice().equalsIgnoreCase(target) && current != tailNode){
 					previous.setNextNode(current.getNextNode());
 					current = null;
 					result = true;
@@ -66,7 +66,7 @@ public class myLinkedList {
 					break;
 				}
 				else 
-					if (current.getVertice() == (target) && current == tailNode){
+					if (current.getVertice().equalsIgnoreCase(target) && current == tailNode){
 						if (headNode.getNextNode() != tailNode){
 							tailNode = previous;
 						}
@@ -84,8 +84,8 @@ public class myLinkedList {
 	
 			current = headNode;
 		}
-		else if (current.getVertice() == source && current == tailNode){
-			if (tailNode.getVertice() == target){
+		else if (current.getVertice().equalsIgnoreCase(source) && current == tailNode){
+			if (tailNode.getVertice().equalsIgnoreCase(target)){
 				tailNode = headNode;
 				current = null;
 				listCount--;
@@ -100,12 +100,12 @@ public class myLinkedList {
 	public boolean removeVerticeNode(String removeVertice){
 		Node current = null;
 		
-		if (headNode.getVertice() == removeVertice && headNode == tailNode){
+		if (headNode.getVertice().equalsIgnoreCase(removeVertice) && headNode == tailNode){
 			headNode = tailNode = null;
 			return true;
 		}
 		
-		else if (headNode.getVertice() == removeVertice && headNode != tailNode){
+		else if (headNode.getVertice().equalsIgnoreCase(removeVertice) && headNode != tailNode){
 			current = headNode.getNextNode();
 			for(int i = 0; i < listCount - 1; i++){
 				headNode.setNextNode(current.getNextNode());
@@ -122,7 +122,7 @@ public class myLinkedList {
 	public boolean searchNode(String searchValue){
 		Node current = headNode;
 		for(int i = 0; i < listCount; i++){
-			if (searchValue == current.getVertice()){
+			if (searchValue.equalsIgnoreCase(current.getVertice())){
 				return true; //edge exists
 			}
 			if (current.getNextNode()!= null){
