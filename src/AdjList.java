@@ -8,7 +8,7 @@ import java.util.Map.Entry;
  * Your task is to complete the implementation of this class.  You may add methods, but ensure your modified class compiles and runs.
  *
  * @author Jeffrey Chan, 2016.
- *///
+ */
 public class AdjList <T extends Object> implements FriendshipGraph<T>
 {   
        
@@ -44,6 +44,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     		myLinkedList list = entry.getValue();
       	    if(vertLabel.equalsIgnoreCase(list.getHeadNode().getVertice())){
       	    	key = entry.getKey();
+      	    	break;
       	    }
     	}    
     	return key;
@@ -204,45 +205,61 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     } // end of printEdges()
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
+    	System.out.println("Shortest Path Start");
 		Map<String, Integer> dist; //Distance of vertex from source
 		Map<String, Integer> visited; //Vertex visited
+		Map<Integer,myLinkedList> isPath;
 		dist = new HashMap<String, Integer>();
 		visited = new HashMap<String, Integer>();
+		isPath = new HashMap<Integer, myLinkedList>();
     	//both vertices have to exist
     	//print to system.err if one does not exist
     	//Set indices if vertex exists
     	String dfs; //dfs = Distance from source
     	int infinite = Integer.MAX_VALUE;
-        	
+    	ArrayList<T> vert1Neigh = neighbours(vertLabel1);
+    	ArrayList<T> vert2Neigh = neighbours(vertLabel2);
+    	if(vert1Neigh.isEmpty() == true || vert2Neigh.isEmpty() == true){
+    		return -1;
+    	}
+        	//Copy vertices with edges and setting indi distance
         if(searchVertex(indexArray, (String)vertLabel2) != -1 && searchVertex(indexArray, (String)vertLabel1)!= -1){
+			System.out.println("Shortest Path Start : 220");
 			for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
+					int key = entry.getKey();
 		  		  myLinkedList value = entry.getValue();
-		  		  dist.put(value.getHeadNode().getVertice(), infinite);
-		  		  visited.put(value.getHeadNode().getVertice(), 0);	  
+		  		  if(!value.getHeadNode().equals(value.getTailNode())){
+		  		  	System.out.println("Shortest Path Start : 222 ");
+		  			  isPath.put(key, value);
+		  			  dist.put(value.getHeadNode().getVertice(), infinite);
+		  			  visited.put(value.getHeadNode().getVertice(), 0);
+		  		  }  
 			}
 			dist.put((String) vertLabel2, 0);
-			for (int i=0 ; i < indexArray.size() ; i++){
+			System.out.println("Shortest Path Start : 228");
+			System.out.println("PATH SIZEEEEEEEEEEEE " + isPath.size());
+			for (int i=0 ; i < isPath.size() ; i++){
+				System.out.println("Shortest Path Start : 230 " + i);
 				dfs = minDistance(dist, visited);
 				visited.put(dfs, 1);
-				
 				for (Entry<String, Integer> visElem : visited.entrySet()) {
-					for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
-						int checkKeySource = searchVertex(indexArray, visElem.getKey());
+					int checkKeySource = searchVertex(isPath, visElem.getKey());
+					for (Entry<Integer, myLinkedList> entry : isPath.entrySet()) {
 		    			Integer key = entry.getKey();
 		    			if(key == checkKeySource){
 		    				myLinkedList list = entry.getValue();
-//		    				if(visElem.getValue()==0 && dist.get(dfs) != infinite && list.searchNode(dfs) != false && dist.get(dfs)+1 < dist.get(visElem.getKey())){
-//		    					continue;
-//		    				}
 							if(visElem.getValue()==0 && dist.get(dfs) != infinite && list.searchNode(dfs) != false && dist.get(dfs)+1 < dist.get(visElem.getKey())){
+					        	System.out.println("Shortest Path Start : 245");
 					        	 int newDist = dist.get(dfs)+1;
 					        	 dist.put(visElem.getKey(), newDist);
+					        	 break;
 							}
 		    			}
 					}
 		        }
 			}
 			if(dist.get((String)vertLabel1) > 0 && dist.get((String)vertLabel1) != infinite){
+				System.out.println("Shortest Path Start : 260");
 				return dist.get((String)vertLabel1);
 			}
         }
