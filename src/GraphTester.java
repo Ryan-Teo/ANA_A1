@@ -215,7 +215,7 @@ public class GraphTester
 				graph = new AdjList<String>();
 				break;
 			case "adjmat":
-				graph = new AdjMatrix<String>();
+				//graph = new AdjMatrix<String>();
 				break;
 		    case "sample":
 		    	graph = new SampleImplementation<String>();
