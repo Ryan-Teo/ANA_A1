@@ -224,22 +224,17 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	}
         	//Copy vertices with edges and setting indi distance
         if(searchVertex(indexArray, (String)vertLabel2) != -1 && searchVertex(indexArray, (String)vertLabel1)!= -1){
-			System.out.println("Shortest Path Start : 220");
 			for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
 					int key = entry.getKey();
 		  		  myLinkedList value = entry.getValue();
 		  		  if(!value.getHeadNode().equals(value.getTailNode())){
-		  		  	System.out.println("Shortest Path Start : 222 ");
 		  			  isPath.put(key, value);
 		  			  dist.put(value.getHeadNode().getVertice(), infinite);
 		  			  visited.put(value.getHeadNode().getVertice(), 0);
 		  		  }  
 			}
 			dist.put((String) vertLabel2, 0);
-			System.out.println("Shortest Path Start : 228");
-			System.out.println("PATH SIZEEEEEEEEEEEE " + isPath.size());
 			for (int i=0 ; i < isPath.size() ; i++){
-				System.out.println("Shortest Path Start : 230 " + i);
 				dfs = minDistance(dist, visited);
 				visited.put(dfs, 1);
 				for (Entry<String, Integer> visElem : visited.entrySet()) {
@@ -249,7 +244,6 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 		    			if(key == checkKeySource){
 		    				myLinkedList list = entry.getValue();
 							if(visElem.getValue()==0 && dist.get(dfs) != infinite && list.searchNode(dfs) != false && dist.get(dfs)+1 < dist.get(visElem.getKey())){
-					        	System.out.println("Shortest Path Start : 245");
 					        	 int newDist = dist.get(dfs)+1;
 					        	 dist.put(visElem.getKey(), newDist);
 					        	 break;
@@ -259,7 +253,6 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 		        }
 			}
 			if(dist.get((String)vertLabel1) > 0 && dist.get((String)vertLabel1) != infinite){
-				System.out.println("Shortest Path Start : 260");
 				return dist.get((String)vertLabel1);
 			}
         }
