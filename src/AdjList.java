@@ -233,28 +233,33 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	String vert1 = (String) vertLabel1;
     	String vert2 = (String) vertLabel2;
     	
-    	int check = -1, path = 0, check1 = -1;
+    	int check = -1, path = 0, check1 = -1, pathCheck = 0;
     	myLinkedList visit = new myLinkedList(null, null, 0);
     	myLinkedList currentList = null; 
     	
     	Node currentListNode = null;
+    	Node currentListNodeCopy = null;
+    	
 
     	if(searchVertex(indexArray, vert1) == -1 || searchVertex(indexArray, vert2)== -1){
     		return disconnectedDist;
     	}
     	visit.addNode(vert1);
     	Node current = visit.getHeadNode();
-    	current.setPath(path++);
+    	current.setPath(path);
+    	path = pathCheck = 1;
     	
     	do{
-	    	currentList = searchArray(indexArray, current.getVertice());
-	    	currentListNode = currentList.getHeadNode();
+	    	
+    		currentList = searchArray(indexArray, current.getVertice());
+	    	currentListNode = currentListNodeCopy = currentList.getHeadNode();
 	    	
 	    	for (int i = 0; i < currentList.getListCount(); i++){
 	    		
 	    		if(searchList(visit, currentListNode.getVertice()) == -1){
 	    			visit.addNode(currentListNode.getVertice());
-	    			visit.getTailNode().setPath(path);
+	    			visit.getTailNode().setPath(path + 1);
+	    			
 	    		}
 	    		currentListNode = currentListNode.getNextNode();
 	    		
@@ -264,18 +269,32 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 	    		return path;
 			}
 	
-	    	path++;
-	
 	    	if(current == visit.getTailNode()){
 	    		return -1;
 	    	}
 	    		
 	    	current = current.getNextNode();
-	    	
+	    	if(checkPath(visit, current.getVertice()) != path){
+	    		path++;
+	    	}
     	}while(check == -1);
     	
         return disconnectedDist;    	
     } // end of shortestPathDistance()
+    public int checkPath(myLinkedList visit, String vertex){
+    	Node current;
+    	current = visit.getHeadNode();
+    	
+    	for (int i = 0; i < visit.getListCount(); i++)
+    	{
+    		if(current.getVertice().equalsIgnoreCase(vertex)){
+    			return current.getPath();
+    		}
+    		current = current.getNextNode();
+    	}
+    	return -1;
+    }
+    
     public myLinkedList searchArray(Map<Integer, myLinkedList> arrayMap, String vertLabel){
     	myLinkedList list = null;
     	
