@@ -29,6 +29,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
     
     @SuppressWarnings("unchecked")
 	public void addVertex(T vertLabel) {
+		long startVertTime = System.nanoTime();
 	 	int vertIndex = -1;
         for(int i=0 ; i < vertCount ; i++){
          	if(vertLabel.equals(vert[i])){
@@ -37,6 +38,7 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
         }
         if(vertIndex == -1){
 			if(vertCount==arraySize){
+				long startTime = System.nanoTime();
 				//Temporary array to store vert values
 				T[] tempVert =(T[]) new String[arraySize];
 				for(int i=0 ; i < vertCount ; i++){
@@ -67,14 +69,19 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
 						matrix[i][j] = tempMat[i][j] ;
 					}
 				}
+				long estimatedTime = System.nanoTime() - startTime;
+				System.out.printf("Array Resize %d to %d : Estimated Time : %d\n", vertCount, arraySize, estimatedTime);
 			}
 			vert[vertCount] = vertLabel;
 			vertCount++;
+			long estimatedVertTime = System.nanoTime() - startVertTime;
+			System.out.printf("Add Vertex : Estimated Time : %d\n", estimatedVertTime);
 		}
     } // end of addVertex()
 	
     
     public void addEdge(T srcLabel, T tarLabel) {
+    	long startTime = System.nanoTime();
         int srcIndex = -1, tarIndex= -1;
         for(int i=0 ; i < vertCount; i++){
         	if(vert[i].equals(srcLabel)){
@@ -93,10 +100,13 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
         	System.err.println("One of the vertices doesn't exist");
             throw new IllegalArgumentException();
         }
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Add Edge : Estimated Time : %d\n", estimatedTime);
     } // end of addEdge()
 	
 
     public ArrayList<T> neighbours(T vertLabel) {
+    	long startTime = System.nanoTime();
         ArrayList<T> neighbours = new ArrayList<T>();
         int vertIndex = -1;
         for(int i=0 ; i < vertCount ; i++){
@@ -116,12 +126,15 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
         	System.err.println("Vertex doesn't exist");
             throw new IllegalArgumentException();
         }
+        long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Neighbours : Estimated Time : %d\n", estimatedTime);
         return neighbours;
     } // end of neighbours()
     
     
     @SuppressWarnings("unchecked")
 	public void removeVertex(T vertLabel) {
+    	long startTime = System.nanoTime();
     	 int vertIndex = -1;
          for(int i=0 ; i < vertCount ; i++){
          	if(vertLabel.equals(vert[i])){
@@ -182,10 +195,13 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
          	System.err.println("Vertex doesn't exist");
          	throw new IllegalArgumentException();
          }
+        long estimatedTime = System.nanoTime() - startTime;
+     	System.out.printf("Remove vertex : Estimated Time : %d\n", estimatedTime);
     } // end of removeVertex()
 	
     
     public void removeEdge(T srcLabel, T tarLabel) {
+    	long startTime = System.nanoTime();
     	int srcIndex = -1, tarIndex= -1;
         for(int i=0 ; i < vertCount; i++){
         	if(vert[i].equals(srcLabel)){
@@ -212,17 +228,23 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
         	System.err.println("One of the vertices doesn't exist");
          	throw new IllegalArgumentException();
         }
+        long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Remove edge : Estimated Time : %d\n", estimatedTime);
     } // end of removeEdges()
 	
     
     public void printVertices(PrintWriter os) {
+    	long startTime = System.nanoTime();
         for(int i=0 ; i < vertCount ; i++){
         	os.println(vert[i]);
         }
+        long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Print Vertices : Estimated Time : %d\n", estimatedTime);
     } // end of printVertices()
 	
     
     public void printEdges(PrintWriter os) {
+    	long startTime = System.nanoTime();
         for(int i=0 ; i < vertCount ; i++){
         	for(int j=0 ; j < vertCount ; j++){
         		if(matrix[i][j]==1){
@@ -230,10 +252,13 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
         		}
         	}
         }
+        long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Print Edges : Estimated Time : %d\n", estimatedTime);
     } // end of printEdges()
     
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
+    	long startTime = System.nanoTime();
     	//both vertices have to exist
     	//print to system.err if one does not exist
     	//Set indices if vertex exists
@@ -269,10 +294,13 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
 				}
 			}
 			if(dist[vert2Index] > 0 && dist[vert2Index] != infinite){
+		        long estimatedTime = System.nanoTime() - startTime;
+		    	System.out.printf("Print Edges : Estimated Time : %d\n", estimatedTime);
 				return dist[vert2Index];
 			}
         }
-
+        long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Print Edges : Estimated Time : %d\n", estimatedTime);
         // if we reach this point, source and target are disconnected
         return disconnectedDist;    	
     } // end of shortestPathDistance()
@@ -291,4 +319,4 @@ public class AdjMatrix <T extends Object> implements FriendshipGraph<T>
         return min_index;
     }
     
-} // end of class AdjMatrix
+}  // end of class AdjMatrix

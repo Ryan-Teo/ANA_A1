@@ -28,12 +28,15 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     
     
     public void addVertex(T vertLabel) {
+    	long startTime = System.nanoTime();
         newVertice = (String)vertLabel;
     	Node newVerticeNode = new Node(newVertice, null);
     	myLinkedList newLinkedList = new myLinkedList(newVerticeNode, newVerticeNode, 1);
     	if(searchVertex(indexArray, newVertice) == -1){
     		indexArray.put(indexCount++, newLinkedList);
     	}
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Add Vertex : Estimated Time : %d\n", estimatedTime);
     	
     } // end of addVertex()
 	
@@ -50,6 +53,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	return key;
     }
     public void addEdge(T srcLabel, T tarLabel) {
+    	long startTime = System.nanoTime();
     	int checkKeySource, checkKeyTarget;
     	String source = (String) srcLabel;
     	String target = (String) tarLabel;
@@ -81,11 +85,14 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     		System.err.println(">>> Error: Inputted source or target does not exist.<<<");
     		throw new IllegalArgumentException();
     	}
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Add Edge : Estimated Time : %d\n", estimatedTime);
     } // end of addEdge()
 	
 
     @SuppressWarnings("unchecked")
 	public ArrayList<T> neighbours(T vertLabel) {
+    	long startTime = System.nanoTime();
     	ArrayList<T> neighbours = new ArrayList<T>();
     	String vertex = (String) vertLabel;
     	int checkKey;
@@ -114,11 +121,15 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	else{
     		throw new IllegalArgumentException();
     	}
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Neighbours : Estimated Time : %d\n", estimatedTime);
         return neighbours;
+        
     } // end of neighbours()
     
     
     public void removeVertex(T vertLabel) {
+    	long startTime = System.nanoTime();
     	String removeVert = (String) vertLabel;
     	int checkKey = -1;
     	
@@ -136,6 +147,8 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	else{
     		throw new IllegalArgumentException();
     	}
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Remove Vertex : Estimated Time : %d\n", estimatedTime);
     			
     }
     	
@@ -143,6 +156,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 	
     
     public void removeEdge(T srcLabel, T tarLabel) {
+    	long startTime = System.nanoTime();
     	int checkKeySource, checkKeyTarget;
     	String source = (String) srcLabel;
     	String target = (String) tarLabel;
@@ -177,18 +191,24 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     		System.err.println(">>> Error: Inputted source or target does not exist.!!!");
     		throw new IllegalArgumentException();
     	}
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Remove Edge : Estimated Time : %d\n", estimatedTime);
    } 
 	
     
     public void printVertices(PrintWriter os) {
+    	long startTime = System.nanoTime();
     	for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
     		  myLinkedList value = entry.getValue();
     		  os.printf("%s \n",value.getHeadNode().getVertice());	
     	}
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Print Vertices : Estimated Time : %d\n", estimatedTime);
     } // end of printVertices()
 	
     
     public void printEdges(PrintWriter os) {
+    	long startTime = System.nanoTime();
 		for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
 			myLinkedList value = entry.getValue();
 			Node current = value.getHeadNode();
@@ -202,9 +222,12 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 			// value.printNode();
 			}
 		}
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Print Edges : Estimated Time : %d\n", estimatedTime);
     } // end of printEdges()
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
+    	long startTime = System.nanoTime();
     	System.out.println("Shortest Path Start");
 		Map<String, Integer> dist; //Distance of vertex from source
 		Map<String, Integer> visited; //Vertex visited
@@ -253,6 +276,8 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 		        }
 			}
 			if(dist.get((String)vertLabel1) > 0 && dist.get((String)vertLabel1) != infinite){
+		    	long estimatedTime = System.nanoTime() - startTime;
+		    	System.out.printf("Shortest Path : Estimated Time : %d\n", estimatedTime);
 				return dist.get((String)vertLabel1);
 			}
         }
@@ -260,6 +285,8 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     		throw new IllegalArgumentException();
         }
 
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Shortest Path not found : Estimated Time : %d\n", estimatedTime);
         // if we reach this point, source and target are disconnected
         return disconnectedDist;    	
     } // end of shortestPathDistance()
