@@ -14,7 +14,9 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
        
 	
 	Map<Integer, myLinkedList> indexArray;
-	Map<Integer, myLinkedList> indexArrayCopy = indexArray;
+	Map<Integer, myLinkedList> indexArrayCopy1;
+	Map<Integer, myLinkedList> indexArrayCopy2;
+	
 	int indexCount = 0;
 	String newVertice;
 	String sourceVertice;
@@ -30,7 +32,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     public void addVertex(T vertLabel) {
     	long startTime = System.nanoTime();
         newVertice = (String)vertLabel;
-    	Node newVerticeNode = new Node(newVertice, null);
+    	Node newVerticeNode = new Node(newVertice, null, -1);
     	myLinkedList newLinkedList = new myLinkedList(newVerticeNode, newVerticeNode, 1);
     	if(searchVertex(indexArray, newVertice) == -1){
     		indexArray.put(indexCount++, newLinkedList);
@@ -227,87 +229,78 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     } // end of printEdges()
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
-    	long startTime = System.nanoTime();
-    	System.out.println("Shortest Path Start");
-		Map<String, Integer> dist; //Distance of vertex from source
-		Map<String, Integer> visited; //Vertex visited
-		Map<Integer,myLinkedList> isPath;
-		dist = new HashMap<String, Integer>();
-		visited = new HashMap<String, Integer>();
-		isPath = new HashMap<Integer, myLinkedList>();
-    	//both vertices have to exist
-    	//print to system.err if one does not exist
-    	//Set indices if vertex exists
-    	String dfs; //dfs = Distance from source
-    	int infinite = Integer.MAX_VALUE;
-    	ArrayList<T> vert1Neigh = neighbours(vertLabel1);
-    	ArrayList<T> vert2Neigh = neighbours(vertLabel2);
-    	if(vert1Neigh.isEmpty() == true || vert2Neigh.isEmpty() == true){
-    		return -1;
-    	}
-        	//Copy vertices with edges and setting indi distance
-        if(searchVertex(indexArray, (String)vertLabel2) != -1 && searchVertex(indexArray, (String)vertLabel1)!= -1){
-			for (Entry<Integer, myLinkedList> entry : indexArray.entrySet()) {
-					int key = entry.getKey();
-		  		  myLinkedList value = entry.getValue();
-		  		  if(!value.getHeadNode().equals(value.getTailNode())){
-		  			  isPath.put(key, value);
-		  			  dist.put(value.getHeadNode().getVertice(), infinite);
-		  			  visited.put(value.getHeadNode().getVertice(), 0);
-		  		  }  
-			}
-			dist.put((String) vertLabel2, 0);
-			for (int i=0 ; i < isPath.size() ; i++){
-				dfs = minDistance(dist, visited);
-				visited.put(dfs, 1);
-				for (Entry<String, Integer> visElem : visited.entrySet()) {
-					int checkKeySource = searchVertex(isPath, visElem.getKey());
-					for (Entry<Integer, myLinkedList> entry : isPath.entrySet()) {
-		    			Integer key = entry.getKey();
-		    			if(key == checkKeySource){
-		    				myLinkedList list = entry.getValue();
-							if(visElem.getValue()==0 && dist.get(dfs) != infinite && list.searchNode(dfs) != false && dist.get(dfs)+1 < dist.get(visElem.getKey())){
-					        	 int newDist = dist.get(dfs)+1;
-					        	 dist.put(visElem.getKey(), newDist);
-					        	 break;
-							}
-		    			}
-					}
-		        }
-			}
-			if(dist.get((String)vertLabel1) > 0 && dist.get((String)vertLabel1) != infinite){
-		    	long estimatedTime = System.nanoTime() - startTime;
-		    	System.out.printf("Shortest Path : Estimated Time : %d\n", estimatedTime);
-				return dist.get((String)vertLabel1);
-			}
-        }
-        else{
-    		throw new IllegalArgumentException();
-        }
+    	
+    	String vert1 = (String) vertLabel1;
+    	String vert2 = (String) vertLabel2;
+    	
+    	int check = -1, path = 0, check1 = -1;
+    	myLinkedList visit = new myLinkedList(null, null, 0);
+    	myLinkedList currentList = null; 
+    	
+    	Node currentListNode = null;
 
-    	long estimatedTime = System.nanoTime() - startTime;
-    	System.out.printf("Shortest Path not found : Estimated Time : %d\n", estimatedTime);
-        // if we reach this point, source and target are disconnected
+    	if(searchVertex(indexArray, vert1) == -1 || searchVertex(indexArray, vert2)== -1){
+    		return disconnectedDist;
+    	}
+    	visit.addNode(vert1);
+    	Node current = visit.getHeadNode();
+    	current.setPath(path++);
+    	
+    	do{
+	    	currentList = searchArray(indexArray, current.getVertice());
+	    	currentListNode = currentList.getHeadNode();
+	    	
+	    	for (int i = 0; i < currentList.getListCount(); i++){
+	    		
+	    		if(searchList(visit, currentListNode.getVertice()) == -1){
+	    			visit.addNode(currentListNode.getVertice());
+	    			visit.getTailNode().setPath(path);
+	    		}
+	    		currentListNode = currentListNode.getNextNode();
+	    		
+	    	}
+	    	if(searchList(visit, vert2) != -1){
+	    		check = 1;
+	    		return path;
+			}
+	
+	    	path++;
+	
+	    	if(current == visit.getTailNode()){
+	    		return -1;
+	    	}
+	    		
+	    	current = current.getNextNode();
+	    	
+    	}while(check == -1);
+    	
         return disconnectedDist;    	
     } // end of shortestPathDistance()
+    public myLinkedList searchArray(Map<Integer, myLinkedList> arrayMap, String vertLabel){
+    	myLinkedList list = null;
+    	
+    	for (Entry<Integer, myLinkedList> entry : arrayMap.entrySet()) {
+    		
+    		list = entry.getValue();
+      	    if(vertLabel.equalsIgnoreCase(list.getHeadNode().getVertice())){
+      	    	return list;
+      	    }
+    	}    
+    	return list;
+    }
     
-    String minDistance(Map<String, Integer> dist, Map<String, Integer>  visited)
-    {
-        // Initialize min value
-        int min = Integer.MAX_VALUE;
-        String minString = null;
-        for (Entry<String, Integer> visElem : visited.entrySet()) {
-        	int checkVisit = visElem.getValue();
-        	 for (Entry<String, Integer> distElem : dist.entrySet()) {
-        		 int checkDist = distElem.getValue();
-        		 if(checkVisit == 0 && checkDist <= min && visElem.getKey().equalsIgnoreCase(distElem.getKey())){
-        			 min = checkDist;
-        			 minString = distElem.getKey();
-        		 }
-        	 }
-        }
- 
-        return minString;
+    public int searchList(myLinkedList list, String vertex){
+    	Node current;
+    	current = list.getHeadNode();
+    	
+    	for (int i = 0; i < list.getListCount(); i++)
+    	{
+    		if(current.getVertice().equalsIgnoreCase(vertex)){
+    			return i;
+    		}
+    		current = current.getNextNode();
+    	}
+    	return -1;
     }
   
 } // end of class AdjList

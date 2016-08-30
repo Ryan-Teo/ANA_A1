@@ -38,7 +38,7 @@ public class myLinkedList {
 	}
 	
 	public void addNode(String newVertice){
-		Node newNode = new Node(newVertice, null);
+		Node newNode = new Node(newVertice, null, -1);
 		
 		if(headNode == null){
 			headNode = newNode;
@@ -49,6 +49,16 @@ public class myLinkedList {
 			tailNode = newNode;
 		}
 		listCount++;
+	}
+	public void removeHeadNode(){
+		Node current = headNode;
+		if(headNode != tailNode){
+			headNode = headNode.getNextNode();
+			current = null;
+		}
+		else if (headNode == tailNode){
+			current = headNode = tailNode = null;
+		}
 	}
 	public boolean removeEdgeNode(String source, String target){
 		Node current = headNode;

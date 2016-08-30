@@ -3,10 +3,20 @@ public class Node {
 
 	private String vertice;
 	private Node nextNode;
+	private int path;
 	
-	public Node(String vertice, Node nextNode){
+	public Node(String vertice, Node nextNode, int path){
 		this.vertice = vertice;
 		this.nextNode = nextNode;
+		this.path = path;
+	}
+
+	public int getPath() {
+		return path;
+	}
+
+	public void setPath(int path) {
+		this.path = path;
 	}
 
 	public String getVertice() {
