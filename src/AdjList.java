@@ -229,7 +229,7 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     } // end of printEdges()
     
     public int shortestPathDistance(T vertLabel1, T vertLabel2) {
-    	
+    	long startTime = System.nanoTime();
     	String vert1 = (String) vertLabel1;
     	String vert2 = (String) vertLabel2;
     	
@@ -242,6 +242,8 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
     	
 
     	if(searchVertex(indexArray, vert1) == -1 || searchVertex(indexArray, vert2)== -1){
+        	long estimatedTime = System.nanoTime() - startTime;
+        	System.out.printf("Shortest Path : Estimated Time : %d\n", estimatedTime);
     		return disconnectedDist;
     	}
     	visit.addNode(vert1);
@@ -266,10 +268,14 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 	    	}
 	    	if(searchList(visit, vert2) != -1){
 	    		check = 1;
+	        	long estimatedTime = System.nanoTime() - startTime;
+	        	System.out.printf("Shortest Path : Estimated Time : %d\n", estimatedTime);
 	    		return path;
 			}
 	
 	    	if(current == visit.getTailNode()){
+	        	long estimatedTime = System.nanoTime() - startTime;
+	        	System.out.printf("Shortest Path : Estimated Time : %d\n", estimatedTime);
 	    		return -1;
 	    	}
 	    		
@@ -278,9 +284,12 @@ public class AdjList <T extends Object> implements FriendshipGraph<T>
 	    		path++;
 	    	}
     	}while(check == -1);
-    	
+
+    	long estimatedTime = System.nanoTime() - startTime;
+    	System.out.printf("Shortest Path : Estimated Time : %d\n", estimatedTime);
         return disconnectedDist;    	
     } // end of shortestPathDistance()
+    
     public int checkPath(myLinkedList visit, String vertex){
     	Node current;
     	current = visit.getHeadNode();
